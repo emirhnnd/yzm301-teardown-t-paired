@@ -59,6 +59,8 @@ Sonuç (10 soru, kural tabanlı çıkarıcı): aile/yönlendirme 10/10, parametr
 SPEC.md (Gherkin) · LEDGER.md · HALLUCINATIONS.md (5 kayıt) · AGENT_COST.md · prompts/ (iki oturumun ilk prompt'u). Temiz oda: oturum 2 yalnızca SPEC.md ile başladı (`prompts/session2_prompt.md`).
 
 ## Demo
+**[▶ Demo videosunu izle (demo/demo.mp4)](demo/demo.mp4)**
+
 `demo/demo.mp4` (≈ 49 sn): CLI a priori / post hoc / sınır / hata, Türkçe soruyla ajan→MCP ve test özeti. Bu bir ekran kaydı değil; `demo/make_video.py` gerçek komutları çalıştırıp yakaladığı çıktıları terminal görünümünde çizer (çıktılar uydurma değildir, betik yeniden üretir).
 
 ## Bilinen sınırlar
