@@ -67,7 +67,9 @@ async def call_tool(session, params):
     return out, dt, args
 
 async def answer(session, q, log, extractor="rules"):
-    if extractor == "llm" and os.environ.get("ANTHROPIC_API_KEY"):
+    if callable(extractor):  # önceden üretilmiş LLM çıkarımı (alt ajan) ya da başka bir çıkarıcı
+        fam, conf, params = extractor(q)
+    elif extractor == "llm" and os.environ.get("ANTHROPIC_API_KEY"):
         fam, conf, params = extract_llm(q)
     else:
         fam, conf = classify(q); params = extract_rules(q) if fam == "t-paired" else None

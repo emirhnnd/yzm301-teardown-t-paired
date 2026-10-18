@@ -1,0 +1,122 @@
+[
+ {
+  "id": 1,
+  "question": "Hastaları iki gruba ayırmadık; herkesi tedaviden önce ve sonra ölçtük, farka bakacağız. dz=0.5, güç 0.8, kaç kişi?"
+ },
+ {
+  "id": 2,
+  "question": "Eşleştirme yapmadan, rastgele atanmış iki kolun (tedavi / kontrol) önce-sonra fark skorlarını karşılaştıracağız, d=0.5, güç 0.8."
+ },
+ {
+  "id": 3,
+  "question": "Çiftler halinde eşlenmiş 25 hasta-sağlıklı kardeş ikilisinde enzim düzeyi farkı, dz=0.6, güç nedir?"
+ },
+ {
+  "id": 4,
+  "question": "Hasta grubu ve sağlıklı gönüllüler (ayrı kişiler) arasında kan düzeyi farkı, d=0.7, kaç kişi?"
+ },
+ {
+  "id": 5,
+  "question": "Plasebo, düşük doz ve yüksek doz kolları arasında ortalama farkı var mı? f=0.3, güç 0.8."
+ },
+ {
+  "id": 6,
+  "question": "Dört farklı kliniğin hasta memnuniyet ortalamalarını kıyaslamak istiyoruz, f=0.25."
+ },
+ {
+  "id": 7,
+  "question": "Aynı hastalara iki farklı ilacı sırayla verdiğimiz çapraz (crossover) bir çalışmada ilaçlar arasındaki ortalama fark, dz=0.4, kaç hasta?"
+ },
+ {
+  "id": 8,
+  "question": "Hastalık var/yok ile genotip (AA, Aa, aa) arasında ilişki var mı, w=0.25, güç 0.8?"
+ },
+ {
+  "id": 9,
+  "question": "Sekiz değişkenle depresyon skorunu açıklayan modelin toplam açıklama gücü (R²) için kaç kişi toplamalıyım, f²=0.1?"
+ },
+ {
+  "id": 10,
+  "question": "İki tedavi arasında hayatta kalma eğrilerini kıyaslayan Cox regresyonu için güç hesabı lazım."
+ },
+ {
+  "id": 11,
+  "question": "Ağrı skorları ordinal, Wilcoxon işaretli sıra testi için kaç hasta gerekir?"
+ },
+ {
+  "id": 12,
+  "question": "Bir tanı testinin duyarlılığını %90'dan %95'e çıkarıp çıkarmadığını sınamak için örneklem büyüklüğü?"
+ },
+ {
+  "id": 13,
+  "question": "Önce ve sonra ölçtük ama bir kontrol grubumuz da var; hangi testi seçmeliyim, güç 0.8, kaç kişi?"
+ },
+ {
+  "id": 14,
+  "question": "Gruplar arasında fark var mı bakmak istiyorum, etki orta büyüklükte, güç 0.8."
+ },
+ {
+  "id": 15,
+  "question": "Bu ilacın etkisi var mı? Hasta sayısını bilmiyorum, bana ne gerektiğini söyle."
+ },
+ {
+  "id": 16,
+  "question": "Ameliyat olan ve olmayan hastaların ağrı skoru ortalaması arasındaki fark, 30'ar kişi, d=0.6; güç ne?"
+ },
+ {
+  "id": 17,
+  "question": "Her hastanın iki koldaki tansiyonunu ölçtük (sol-sağ), farkın sıfırdan farklı olup olmadığı, dz=0.3, kaç hasta?"
+ },
+ {
+  "id": 18,
+  "question": "Üç kol arasında önce-sonra değil, yalnızca son ölçümlerin ortalaması karşılaştırılacak, f=0.4, kol başına kaç kişi?"
+ },
+ {
+  "id": 19,
+  "question": "Doğum yöntemi (normal/sezaryen) ile bebek sarılığı (var/yok) bağımlılığı, w=0.2, 300 kişi, güç?"
+ },
+ {
+  "id": 20,
+  "question": "Yaş ve cinsiyet kontrol edildikten sonra stresin eklenmesiyle R²'nin artıp artmadığı, f²=0.05 (sıralı regresyon)."
+ },
+ {
+  "id": 21,
+  "question": "Ortalama ile standart sapmanın kendisinin bir tahminini hesaplamak istiyorum, güven aralığı genişliği 2 olsun."
+ },
+ {
+  "id": 22,
+  "question": "Aynı gün iki ayrı hastanede doğan bebeklerin doğum ağırlığı ortalaması farklı mı, d=0.3, kaç bebek?"
+ },
+ {
+  "id": 23,
+  "question": "Kocalar ve eşlerinin (evli çiftler) memnuniyet puanları arasındaki fark, 50 çift, dz=0.25, alfa 0.05 güç?"
+ },
+ {
+  "id": 24,
+  "question": "Dört farklı ilaç markasının etken madde miktarı ortalamaları aynı mı, f=0.35, her marka için kaç örnek?"
+ },
+ {
+  "id": 25,
+  "question": "Karşılaştırma yapacağız. Etki büyüklüğünü 0.5 varsayalım."
+ },
+ {
+  "id": 26,
+  "question": "Doz-yanıt eğrisinin eğimini (lojistik regresyon, ikili sonuç) test etmek için kaç hasta?"
+ },
+ {
+  "id": 27,
+  "question": "İki oran karşılaştırması: tedavide iyileşme %60, plasebo %40; bunu ki-kare olumsallık tablosuyla sınayacağız, w=0.2, güç 0.8."
+ },
+ {
+  "id": 28,
+  "question": "Şampuan uygulanan saçın bir yarısı ile uygulanmayan diğer yarısı arasındaki kırılma farkı (aynı kişi), dz=0.5."
+ },
+ {
+  "id": 29,
+  "question": "Dört yordayıcılı regresyon modelinin gücü: 80 kişi, f²=0.15, alfa 0.05."
+ },
+ {
+  "id": 30,
+  "question": "İki ölçüm yapıldı. Aynı kişilerde mi yoksa farklı kişilerde mi olduğunu veriyi toplayan arkadaşım bilir, ona sormam lazım. dz=0.4."
+ }
+]

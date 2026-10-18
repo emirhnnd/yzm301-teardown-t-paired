@@ -4,6 +4,7 @@
 |---|---|---|---|---|---|
 | 1 (inceleme) | Claude (Sonnet 5.5) + REA 6.5.0 + Ghidra 12.1.4 | İkili inceleme, LEDGER/HALLUCINATIONS/SPEC üretimi | ≈ 1,5–2 M (bağlam sıkıştırması dahil; ölçülen sayaç yok, tahmin) | tahmini ≈ 6–10 USD | 3 bağlam penceresi, ≈ 120 araç çağrısı |
 | 2 (yazım) | Claude alt ajanı, yalnızca SPEC.md ile | Temiz oda yeniden yazım | tahmin: 0,1–0,3 M | tahmini ≈ 0,5–1,5 USD | 1 tur + düzeltmeler |
+| Ajan ölçümleri | 4 Claude haiku alt ajanı (TR/EN sınıflandırma ×2 set, 10 soru çıkarımı) | LLM çıkarıcı, kalibrasyon | alt ajan sayaçları: ≈ 70.000 token/ajan (çoğu sabit yük), toplam ≈ 0,5 M | ≈ 0,3–0,5 USD (tahmin) | 1 tur |
 | Test ve MCP | Claude (aynı oturum 1 bağlamı) | Diferansiyel test, MCP adaptörü, ajan | tahmin: 0,3 M | tahmini ≈ 1–2 USD | birkaç tur |
 
 Not: Kesin token/maliyet sayacı bu ortamda ajana açık değildi; yukarıdaki değerler **tahmindir** (en dürüst ifade budur) ve oturum günlüklerinden doğrulanmamıştır.

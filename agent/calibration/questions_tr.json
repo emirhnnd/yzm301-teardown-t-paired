@@ -1,0 +1,162 @@
+[
+ {
+  "id": 1,
+  "question": "Aynı 30 hastanın ilaç başlamadan önceki ve üç ay sonraki kolesterol değerlerini karşılaştıracağız; dz=0.5, alfa 0.05, güç 0.80 için kaç hasta gerekir?"
+ },
+ {
+  "id": 2,
+  "question": "Her katılımcıyı hem sağ hem sol elinde ölçtük, eşleştirilmiş t testi için güç nedir? dz=0.4, 20 çift, alfa 0.05."
+ },
+ {
+  "id": 3,
+  "question": "Egzersiz programı öncesi ve sonrası istirahat nabzı ölçülen kişiler için tek yönlü, dz=0.6, alfa 0.05, güç 0.90 örneklem büyüklüğü?"
+ },
+ {
+  "id": 4,
+  "question": "İkiz kardeşlerde (her çiftte bir kardeşe tedavi, diğerine plasebo) fark için dz=0.35 beklenirse kaç ikiz çifti lazım, güç 0.80, alfa 0.05?"
+ },
+ {
+  "id": 5,
+  "question": "Ameliyat öncesi ve sonrası ağrı skoru, 45 hasta, dz=0.3, alfa 0.01; gücümüz ne kadar?"
+ },
+ {
+  "id": 6,
+  "question": "Aynı öğrencilerin ön test ve son test notları arasındaki farkı yakalamak için dz=0.45, alfa 0.05, %85 güçle kaç öğrenci gerekir?"
+ },
+ {
+  "id": 7,
+  "question": "Tek göz ameliyatlı hastalarda ameliyatlı ve ameliyatsız göz arasındaki basınç farkı (eşleşmiş gözler), dz=0.7, güç 0.80, kaç hasta?"
+ },
+ {
+  "id": 8,
+  "question": "Kilo kaybı programının başında ve sonunda tartılan 60 kişi için dz=0.2, alfa 0.05, iki yönlü güç kaçtır?"
+ },
+ {
+  "id": 9,
+  "question": "Tedavi grubu ile kontrol grubunun (farklı hastalar) ortalama tansiyonunu karşılaştıracağız; d=0.5, alfa 0.05, güç 0.80, grup başına kaç hasta?"
+ },
+ {
+  "id": 10,
+  "question": "Erkek ve kadınlarda boy ortalaması farkı için iki bağımsız grup t testi, d=0.8, eşit gruplar, güç 0.90 kaç kişi?"
+ },
+ {
+  "id": 11,
+  "question": "İlaç grubu 40, plasebo grubu 40 kişi; d=0.4, alfa 0.05 ile gücümüz nedir?"
+ },
+ {
+  "id": 12,
+  "question": "Sigara içenlerle içmeyenlerin akciğer kapasitesi ortalamasını kıyaslıyoruz, d=0.6, tek yönlü, alfa 0.05, güç 0.80."
+ },
+ {
+  "id": 13,
+  "question": "Randomize iki kollu çalışmada A kolu ile B kolu arasındaki HbA1c farkı için d=0.3, güç 0.85, kaç denek?"
+ },
+ {
+  "id": 14,
+  "question": "Cerrahi ile konservatif tedavi gören iki ayrı hasta grubunun iyileşme süresi, d=0.55, alfa 0.05, güç 0.80."
+ },
+ {
+  "id": 15,
+  "question": "Yeni ve eski eğitim yöntemiyle öğrenen iki farklı sınıfın sınav ortalamaları arasındaki fark, d=0.35, kaç öğrenci gerekir?"
+ },
+ {
+  "id": 16,
+  "question": "Hastane A ve hastane B'deki hastaların bekleme süresi ortalamaları farklı mı? d=0.5, 50'şer hasta, güç nedir?"
+ },
+ {
+  "id": 17,
+  "question": "Üç farklı doz grubunun (düşük, orta, yüksek) ortalama ağrı skorlarını karşılaştırmak için f=0.25, alfa 0.05, güç 0.80 ile kaç hasta gerekir?"
+ },
+ {
+  "id": 18,
+  "question": "Dört tedavi kolunda tek yönlü varyans analizi, etki büyüklüğü f=0.4, güç 0.90."
+ },
+ {
+  "id": 19,
+  "question": "Beş farklı gübre türünün verime etkisi, tek faktörlü ANOVA, f=0.3, alfa 0.05, güç 0.80."
+ },
+ {
+  "id": 20,
+  "question": "Üç kol, kol başına 25 kişi, f=0.35, alfa 0.05; ANOVA gücü nedir?"
+ },
+ {
+  "id": 21,
+  "question": "Üç ayrı hastanenin ortalama yatış süresini aynı anda karşılaştırmak istiyoruz, f=0.2, güç 0.80."
+ },
+ {
+  "id": 22,
+  "question": "Altı egzersiz protokolünün ortalama VO2 değerlerini karşılaştıran tek yönlü ANOVA için f=0.25, kaç denek?"
+ },
+ {
+  "id": 23,
+  "question": "Sigara içme durumu (içen/içmeyen) ile akciğer hastalığı (var/yok) arasındaki ilişkiyi 2x2 olumsallık tablosunda ki-kare ile sınayacağız, w=0.3, güç 0.80."
+ },
+ {
+  "id": 24,
+  "question": "Üç kan grubu ile hastalık durumu arasında ki-kare bağımsızlık testi, w=0.2, alfa 0.05, kaç kişi?"
+ },
+ {
+  "id": 25,
+  "question": "Cinsiyet ve parti tercihi (4 parti) tablosunda ki-kare, w=0.15, güç 0.90."
+ },
+ {
+  "id": 26,
+  "question": "Aşı olan ve olmayanlarda hastalanma oranlarının olumsallık tablosu, w=0.25, alfa 0.05, güç 0.80."
+ },
+ {
+  "id": 27,
+  "question": "Anket cevabı (evet/hayır/kararsız) ile yaş grubu (3 grup) ilişkisi için ki-kare, w=0.3, 200 kişi, güç?"
+ },
+ {
+  "id": 28,
+  "question": "Kategorik iki değişken arasında bağımsızlık sınaması, 3x3 tablo, w=0.2, alfa 0.01, güç 0.80."
+ },
+ {
+  "id": 29,
+  "question": "Yaş, kilo ve kan şekeri değişkenleriyle tansiyonu tahmin eden çoklu doğrusal regresyonda R² testi, f²=0.15, güç 0.80, kaç kişi?"
+ },
+ {
+  "id": 30,
+  "question": "Beş yordayıcılı bir regresyon modelinde R² anlamlı mı, f²=0.1, alfa 0.05, güç 0.90."
+ },
+ {
+  "id": 31,
+  "question": "Çoklu regresyonda toplam varyansın açıklanma oranı (R²) için örneklem büyüklüğü, 4 yordayıcı, f²=0.2."
+ },
+ {
+  "id": 32,
+  "question": "Risk faktörleri (yaş, BMI, sigara, kolesterol, aile öyküsü) ile hastalık skoru arasındaki regresyon; f²=0.12, 150 kişi, güç nedir?"
+ },
+ {
+  "id": 33,
+  "question": "Üç bağımsız değişkenli regresyon modelinde R² sıfırdan farklı mı testi için n, f²=0.35, alfa 0.05, güç 0.80."
+ },
+ {
+  "id": 34,
+  "question": "Gelir, eğitim ve yaşla mutluluk puanını yordayan çoklu regresyon, R² testi, f²=0.08, güç 0.85."
+ },
+ {
+  "id": 35,
+  "question": "İki ölçüm arasındaki farkı karşılaştıracağız, etki 0.5, güç 0.80, kaç kişi gerekir?"
+ },
+ {
+  "id": 36,
+  "question": "İki grubun ortalamalarını karşılaştırmak istiyorum, d=0.5, ama gruplar aynı kişilerden mi farklı kişilerden mi henüz bilmiyorum."
+ },
+ {
+  "id": 37,
+  "question": "Tedavinin etkisini görmek için bir çalışma planlıyorum, güç 0.80 olsun, kaç hasta gerekir?"
+ },
+ {
+  "id": 38,
+  "question": "Hayatta kalma süresini iki tedavi arasında log-rank testiyle karşılaştıracağım, kaç olay gerekir?"
+ },
+ {
+  "id": 39,
+  "question": "İki sürekli değişken arasındaki Pearson korelasyonu r=0.3'ü saptamak için kaç kişi lazım?"
+ },
+ {
+  "id": 40,
+  "question": "Verim normal dağılmıyor, Mann-Whitney U testi için örneklem büyüklüğü hesaplar mısın?"
+ }
+]

@@ -1,0 +1,162 @@
+[
+ {
+  "id": 1,
+  "question": "We will compare the cholesterol values of the same 30 patients before starting the drug and three months later; how many patients are needed for dz=0.5, alpha 0.05, power 0.80?"
+ },
+ {
+  "id": 2,
+  "question": "We measured each participant on both the right and left hand; what is the power for a paired t-test? dz=0.4, 20 pairs, alpha 0.05."
+ },
+ {
+  "id": 3,
+  "question": "Sample size for people whose resting pulse was measured before and after an exercise program, one-tailed, dz=0.6, alpha 0.05, power 0.90?"
+ },
+ {
+  "id": 4,
+  "question": "If dz=0.35 is expected for the difference in twins (one twin of each pair gets treatment, the other placebo), how many twin pairs are needed, power 0.80, alpha 0.05?"
+ },
+ {
+  "id": 5,
+  "question": "Pain score before and after surgery, 45 patients, dz=0.3, alpha 0.01; what is our power?"
+ },
+ {
+  "id": 6,
+  "question": "How many students are needed to detect the difference between pre-test and post-test scores of the same students, dz=0.45, alpha 0.05, 85% power?"
+ },
+ {
+  "id": 7,
+  "question": "Pressure difference between the operated and non-operated eye in patients with single-eye surgery (matched eyes), dz=0.7, power 0.80, how many patients?"
+ },
+ {
+  "id": 8,
+  "question": "For 60 people weighed at the start and end of a weight-loss program, dz=0.2, alpha 0.05, what is the two-tailed power?"
+ },
+ {
+  "id": 9,
+  "question": "We will compare mean blood pressure between a treatment group and a control group (different patients); d=0.5, alpha 0.05, power 0.80, how many patients per group?"
+ },
+ {
+  "id": 10,
+  "question": "Independent two-group t-test for the difference in mean height between men and women, d=0.8, equal groups, power 0.90, how many people?"
+ },
+ {
+  "id": 11,
+  "question": "Drug group 40, placebo group 40 people; with d=0.4 and alpha 0.05, what is our power?"
+ },
+ {
+  "id": 12,
+  "question": "We compare mean lung capacity of smokers and non-smokers, d=0.6, one-tailed, alpha 0.05, power 0.80."
+ },
+ {
+  "id": 13,
+  "question": "In a randomized two-arm trial, for the HbA1c difference between arm A and arm B, d=0.3, power 0.85, how many subjects?"
+ },
+ {
+  "id": 14,
+  "question": "Recovery time of two separate patient groups receiving surgery versus conservative treatment, d=0.55, alpha 0.05, power 0.80."
+ },
+ {
+  "id": 15,
+  "question": "Difference between exam means of two different classes taught with the new and old method, d=0.35, how many students are needed?"
+ },
+ {
+  "id": 16,
+  "question": "Are mean waiting times different for patients at hospital A and hospital B? d=0.5, 50 patients each, what is the power?"
+ },
+ {
+  "id": 17,
+  "question": "To compare mean pain scores of three dose groups (low, medium, high), how many patients are needed with f=0.25, alpha 0.05, power 0.80?"
+ },
+ {
+  "id": 18,
+  "question": "One-way analysis of variance across four treatment arms, effect size f=0.4, power 0.90."
+ },
+ {
+  "id": 19,
+  "question": "Effect of five different fertilizer types on yield, one-way ANOVA, f=0.3, alpha 0.05, power 0.80."
+ },
+ {
+  "id": 20,
+  "question": "Three arms, 25 people per arm, f=0.35, alpha 0.05; what is the ANOVA power?"
+ },
+ {
+  "id": 21,
+  "question": "We want to compare mean length of stay in three separate hospitals at once, f=0.2, power 0.80."
+ },
+ {
+  "id": 22,
+  "question": "How many subjects for a one-way ANOVA comparing mean VO2 across six exercise protocols, f=0.25?"
+ },
+ {
+  "id": 23,
+  "question": "We will test the association between smoking (yes/no) and lung disease (yes/no) with chi-square in a 2x2 contingency table, w=0.3, power 0.80."
+ },
+ {
+  "id": 24,
+  "question": "Chi-square test of independence between three blood groups and disease status, w=0.2, alpha 0.05, how many people?"
+ },
+ {
+  "id": 25,
+  "question": "Chi-square on the table of gender and party preference (4 parties), w=0.15, power 0.90."
+ },
+ {
+  "id": 26,
+  "question": "Contingency table of illness rates in vaccinated and unvaccinated people, w=0.25, alpha 0.05, power 0.80."
+ },
+ {
+  "id": 27,
+  "question": "Chi-square for the association between survey answer (yes/no/undecided) and age group (3 groups), w=0.3, 200 people, power?"
+ },
+ {
+  "id": 28,
+  "question": "Test of independence between two categorical variables, 3x3 table, w=0.2, alpha 0.01, power 0.80."
+ },
+ {
+  "id": 29,
+  "question": "R² test in a multiple linear regression predicting blood pressure from age, weight and blood sugar, f²=0.15, power 0.80, how many people?"
+ },
+ {
+  "id": 30,
+  "question": "Is R² significant in a regression model with five predictors, f²=0.1, alpha 0.05, power 0.90."
+ },
+ {
+  "id": 31,
+  "question": "Sample size for R² (proportion of variance explained) in multiple regression, 4 predictors, f²=0.2."
+ },
+ {
+  "id": 32,
+  "question": "Regression between risk factors (age, BMI, smoking, cholesterol, family history) and disease score; f²=0.12, 150 people, what is the power?"
+ },
+ {
+  "id": 33,
+  "question": "Sample size n for testing whether R² differs from zero in a regression model with three independent variables, f²=0.35, alpha 0.05, power 0.80."
+ },
+ {
+  "id": 34,
+  "question": "Multiple regression predicting happiness score from income, education and age, R² test, f²=0.08, power 0.85."
+ },
+ {
+  "id": 35,
+  "question": "We will compare the difference between two measurements, effect 0.5, power 0.80, how many people are needed?"
+ },
+ {
+  "id": 36,
+  "question": "I want to compare the means of two groups, d=0.5, but I do not yet know whether the groups are the same people or different people."
+ },
+ {
+  "id": 37,
+  "question": "I am planning a study to see the effect of the treatment; let power be 0.80, how many patients are needed?"
+ },
+ {
+  "id": 38,
+  "question": "I will compare survival time between two treatments with a log-rank test; how many events are needed?"
+ },
+ {
+  "id": 39,
+  "question": "How many people are needed to detect a Pearson correlation of r=0.3 between two continuous variables?"
+ },
+ {
+  "id": 40,
+  "question": "The data are not normally distributed; can you compute the sample size for the Mann-Whitney U test?"
+ }
+]

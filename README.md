@@ -61,7 +61,7 @@ gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --p
 |---|---|---|
 | Temel: CLI, SPEC, LEDGER, HALLUCINATIONS, AGENT_COST, oracle, testler | 85 | ✅ |
 | MCP sunucusu | +15 | ✅ |
-| AI ajanı | +10 | ✅ kısmen (kural tabanlı çıkarıcı ölçüldü; LLM çıkarıcı kodda var ama **ölçülmedi**, bkz. §9) |
+| AI ajanı | +10 | ✅ LLM çıkarıcı + kalibrasyon + TR/EN ölçüldü; GUI token karşılaştırması yalnızca hesap (bkz. §9) |
 
 ---
 
@@ -229,16 +229,43 @@ MCP, bir yapay zekânın dış araçları çağırma standardıdır. `powerlab-m
 
 ### Türkçe AI ajanı (+10)
 
-Araştırmacı Türkçe sorar; ajan hangi teste ait olduğunu tahmin eder, parametreleri çıkarır ve aracı çağırır. **Rakamları ajan hesaplamaz, yalnızca MCP aracı üretir.** Emin değilse (güven < 0,75) ya da test desteklenmiyorsa **sorar**.
+Araştırmacı Türkçe sorar; ajan hangi teste ait olduğunu belirler, parametreleri çıkarır ve aracı çağırır. **Rakamları ajan hesaplamaz, yalnızca MCP aracı üretir.** Emin değilse (güven < 0,75) ya da test desteklenmiyorsa **sorar**.
+
+İki çıkarıcı var: kural tabanlı (çevrimdışı) ve LLM. LLM çıkarıcı olarak **hızlı bir model (Claude haiku, "Sistem 1" rolü) alt ajan olarak** kullanıldı; Jev erişimi yoktu, bu yüzden aynı etiket kümesine kısıtlı bir LLM kullandık (ödevin izin verdiği yol). Model yalnızca etiket, güven ve sorudaki sayıları üretir, hesap yapmaz.
 
 ```bash
-python agent/run_eval.py       # → agent/eval_report.md, logs/tool_calls.jsonl
+python agent/run_eval.py        # kural tabanlı → agent/eval_report.md
+python agent/run_eval_llm.py    # LLM çıkarımı (agent/calibration/out_10.json) + MCP → agent/eval_report_llm.md
+python agent/calibration/analyze.py easy|hard   # kalibrasyon ve TR/EN raporları
 ```
 
-Örnek: *"Önce ve sonra tansiyon ölçtüğümüz aynı hastalarda dz=0,5, alfa 0,05, güç 0,80 için kaç hasta gerekir?"* → ajan `t-paired` etiketini koyar, aracı çağırır, N = 34 döner. *"İlaç ve plasebo gruplarını karşılaştırıyorum…"* → bu bağımsız iki grup testidir, **desteklenmez**, ajan araştırmacıya sorar.
+| Ölçüt | Kural tabanlı | LLM (haiku) |
+|---|---|---|
+| 10 soruluk değerlendirme seti: aile / yönlendirme | 10/10 (kurallar bu sorulara bakılarak yazıldı) | 10/10 |
+| Parametreler / N ya da güç doğru | 8/8 · 8/8 | 8/8 · 8/8 |
+| Yeni, kolay 40 soru (TR) etiket doğruluğu | **24/40** | 40/40 |
+| Yeni, zor 30 soru (TR) etiket doğruluğu | **9/30** | 29/30 |
+| Yanlış aileyle t-paired aracını çağırma | 4 vakada | 0 |
 
-| Ölçüt (10 soruluk küçük set) | Sonuç |
-|---|---|
+**Kalibrasyon** ("%90 güven" dediğinde gerçekte yüzde kaç doğru?), 70 soru × TR/EN = 140 tahmin, tümü LLM:
+
+| Söylenen güven | n | ortalama söylenen | gerçek doğruluk |
+|---|---|---|---|
+| < 0,75 | 7 | 0,61 | 0,86 |
+| 0,75–0,90 | 20 | 0,82 | 1,00 |
+| 0,90–0,96 | 86 | 0,93 | 1,00 |
+| ≥ 0,96 | 27 | 0,97 | 1,00 |
+
+Genel doğruluk 139/140, ECE 0,087. Model **temkinli** (söylediğinden daha sık doğru), güven arttıkça doğruluk düşmüyor.
+**Türkçe ve İngilizce:** Türkçe 69/70, İngilizce 70/70; iki dil 69/70 soruda aynı etiketi verdi. Fark bu örneklemle anlamlı değildir (tek yanlış).
+
+Ayrıntı: `agent/calibration/`, `agent/eval_report_llm.md`, `agent/TOKEN_COMPARISON.md`.
+
+**Token karşılaştırması:** MCP yolu **ölçüldü**: araç çağrısı+yanıt ≈ 51 token/soru, sunucu süresi ≈ 5,6 ms, 8/8 doğru. GUI yolu **ölçülemedi**: G\*Power taşınabilir `.exe` olduğundan bilgisayar kontrolü onu açamadı. GUI için gerçek ekran görüntülerinden *hesap*: pencere görüntüsü ≈ 486 token, soru başına ≥ 3 görüntü → ≈ 1.500–9.000 token, yani **tahminen 30–180 kat** (`agent/TOKEN_COMPARISON.md`).
+
+Etiket kümesi: `t2-indep`, `t-paired`, `anova-oneway`, `chi2-contingency`, `multireg-r2`, `ambiguous`, `unsupported`.
+
+---|---|
 | Test ailesi / yönlendirme doğru | 10/10 |
 | Parametreler doğru | 8/8 |
 | N ya da güç doğru (bağımsız scipy ile) | 8/8 |
@@ -262,7 +289,7 @@ Etiket kümesi: `t2-indep`, `t-paired`, `anova-oneway`, `chi2-contingency`, `mul
 | `src/powerlab/engine.py` | Hesap motoru: güç, Brent, yuvarlama, `a_priori`, `post_hoc` |
 | `src/powerlab/cli.py` | Komut satırı arayüzü (`compute()` fonksiyonu ortak çekirdek) |
 | `src/powerlab_mcp/server.py` | MCP adaptörü (ince katman) |
-| `agent/` | Türkçe ajan, değerlendirme seti ve raporu |
+| `agent/` | Türkçe ajan, değerlendirme setleri, kalibrasyon (`calibration/`), token karşılaştırması |
 | `tests/` | Diferansiyel, ölçek, sınır ve CLI↔MCP eşlik testleri |
 | `demo/` | Demo videosu ve onu üreten betikler |
 | `docs/` | Ekran görüntüleri (G\*Power penceresi, REA kontrolü) |
@@ -271,8 +298,10 @@ Etiket kümesi: `t2-indep`, `t-paired`, `anova-oneway`, `chi2-contingency`, `mul
 
 ## 9. Dürüstlük: neyi yapmadık / bilmiyoruz
 
-- **Ajan, kendi 10 sorusuna bakılarak yazılmış kurallarla çalışıyor.** Bu bir genelleme ölçümü değildir. LLM tabanlı çıkarıcı kodda var ama API anahtarı olmadığından **hiç ölçülmedi**; hakem (Jev) kalibrasyonu ve İngilizce çeviri karşılaştırması yapılmadı.
-- **GUI ajanı ile token/süre karşılaştırması yapılmadı.** Yalnızca MCP yolunun boyutu ölçüldü (soru başına ≈ 50 token, karakter÷4 tahmini). "GUI yolu bir mertebe pahalı" ifadesi bir varsayımdır, ölçüm değil. `AGENT_COST.md`'deki maliyetler tahmindir.
+- **Kalibrasyon seti benim yazdığım sorulardır.** Sorular ve beklenen etiketler Claude tarafından yazıldı, etiketleyen model de Claude; yanlılık ortak olabilir. Kolay sette tavan etkisi var (%100) ve 140 tahminde yalnızca 1 yanlış var, bu yüzden kalibrasyon eğrisi istatistiksel olarak zayıf.
+- **Kural tabanlı çıkarıcı genelleştirmiyor.** 10 soruya bakılarak yazıldığı için orada 10/10, yeni sorularda 24/40 ve 9/30; yanlış aileyle araç çağırdığı vakalar var. LLM çıkarıcı bunu düzeltiyor, güvenilecek olan odur.
+- **Jev yoktu; Claude haiku kullanıldı** ve bu, alt ajan olarak çalıştı (`ANTHROPIC_API_KEY` ile `extract_llm` yolu hâlâ ölçülmedi).
+- **GUI token karşılaştırması ölçüm değil, hesaptır.** G\*Power Başlat menüsünde kayıtlı olmadığı için gerçek bir GUI ajanı koşturulamadı; GUI süresi ve GUI doğruluğu ölçülmedi. MCP tarafı ölçüldü (bkz. `agent/TOKEN_COMPARISON.md`).
 - **Demo videosu ekran kaydı değildir.** `demo/make_video.py` gerçek komutları çalıştırıp çıktılarını terminal görünümünde çizer; çıktılar uydurma değildir, betik yeniden üretir.
 - **Doğrulanmamış kenarlar:** alfa ve güç için kesin geçerlilik aralıkları, |dz| ≤ 20 sınır mesajının tam ön eki ve çok küçük dz için üst sınır davranışı G\*Power'da denenmedi (`[AJAN]`, bkz. SPEC §8).
 - **Popülasyon düzeltmesi** (ikili dosyada bir alan var) arayüzden erişilebilir mi bilinmiyor; uygulanmadı.

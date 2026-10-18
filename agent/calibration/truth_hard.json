@@ -1,0 +1,122 @@
+[
+ {
+  "id": 1,
+  "family": "t-paired"
+ },
+ {
+  "id": 2,
+  "family": "t2-indep"
+ },
+ {
+  "id": 3,
+  "family": "t-paired"
+ },
+ {
+  "id": 4,
+  "family": "t2-indep"
+ },
+ {
+  "id": 5,
+  "family": "anova-oneway"
+ },
+ {
+  "id": 6,
+  "family": "anova-oneway"
+ },
+ {
+  "id": 7,
+  "family": "t-paired"
+ },
+ {
+  "id": 8,
+  "family": "chi2-contingency"
+ },
+ {
+  "id": 9,
+  "family": "multireg-r2"
+ },
+ {
+  "id": 10,
+  "family": "unsupported"
+ },
+ {
+  "id": 11,
+  "family": "unsupported"
+ },
+ {
+  "id": 12,
+  "family": "unsupported"
+ },
+ {
+  "id": 13,
+  "family": "ambiguous"
+ },
+ {
+  "id": 14,
+  "family": "ambiguous"
+ },
+ {
+  "id": 15,
+  "family": "ambiguous"
+ },
+ {
+  "id": 16,
+  "family": "t2-indep"
+ },
+ {
+  "id": 17,
+  "family": "t-paired"
+ },
+ {
+  "id": 18,
+  "family": "anova-oneway"
+ },
+ {
+  "id": 19,
+  "family": "chi2-contingency"
+ },
+ {
+  "id": 20,
+  "family": "multireg-r2"
+ },
+ {
+  "id": 21,
+  "family": "unsupported"
+ },
+ {
+  "id": 22,
+  "family": "t2-indep"
+ },
+ {
+  "id": 23,
+  "family": "t-paired"
+ },
+ {
+  "id": 24,
+  "family": "anova-oneway"
+ },
+ {
+  "id": 25,
+  "family": "ambiguous"
+ },
+ {
+  "id": 26,
+  "family": "unsupported"
+ },
+ {
+  "id": 27,
+  "family": "chi2-contingency"
+ },
+ {
+  "id": 28,
+  "family": "t-paired"
+ },
+ {
+  "id": 29,
+  "family": "multireg-r2"
+ },
+ {
+  "id": 30,
+  "family": "ambiguous"
+ }
+]
