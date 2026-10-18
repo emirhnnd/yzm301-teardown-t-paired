@@ -1,0 +1,8 @@
+GPower*.exe
+GPowerNT.exe
+*.exe
+decompile/
+ghidra_out/
+__pycache__/
+.pytest_cache/
+*.pyc
