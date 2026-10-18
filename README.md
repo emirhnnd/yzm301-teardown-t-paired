@@ -11,7 +11,9 @@ Faul, F., Erdfelder, E., Buchner, A., & Lang, A.-G. (2009). Statistical power an
 
 ## İncelenen ikili dosya
 Sürüm 3.1.9.7 (Windows), `GPowerNT.exe`, SHA-256: `c63e6a133eb6372932f810c08cc33dc35a06d1ddb658f897bd6c34a754efc812`. İkili dosya repoda **yoktur** (`.gitignore`), yalnızca resmi sayfadan alınır. Decompile çıktısı repoda yoktur.
-Araçlar: REA 6.5.0 (npm `rea-agents`), Ghidra 12.1.4, JDK 21. REA'nın Ghidra sağlayıcısının kullanılabilir olduğu oturumda doğrulandı (`open_binary` + dize/xref/decompile çağrıları başarılı); ekran görüntüsü eklenmedi (yalnızca araç çağrı sonuçları oturum günlüğünde).
+Araçlar: REA 6.5.0 (npm `rea-agents`), Ghidra 12.1.4, JDK 21. REA'nın Ghidra sağlayıcısının kullanılabilir olduğu oturumda doğrulandı (`open_binary` + dize/xref/decompile çağrıları başarılı); ekran görüntüsü:
+
+![REA ve Ghidra kontrolü](docs/rea_kontrol.png)
 
 ## Kurulum
 ```
