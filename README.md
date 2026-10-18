@@ -57,7 +57,7 @@ Sonuç (10 soru, kural tabanlı çıkarıcı): aile/yönlendirme 10/10, parametr
 SPEC.md (Gherkin) · LEDGER.md · HALLUCINATIONS.md (5 kayıt) · AGENT_COST.md · prompts/ (iki oturumun ilk prompt'u). Temiz oda: oturum 2 yalnızca SPEC.md ile başladı (`prompts/session2_prompt.md`).
 
 ## Demo
-60 saniyelik CLI videosu için senaryo: `demo/demo.sh`. Video bağlantısı: (kaydedilip eklenecek).
+`demo/demo.mp4` (≈ 49 sn): CLI a priori / post hoc / sınır / hata, Türkçe soruyla ajan→MCP ve test özeti. Bu bir ekran kaydı değil; `demo/make_video.py` gerçek komutları çalıştırıp yakaladığı çıktıları terminal görünümünde çizer (çıktılar uydurma değildir, betik yeniden üretir).
 
 ## Bilinen sınırlar
 Alfa/güç için kesin geçerlilik aralıkları, |dz| ≤ 20 sınır mesajının ön eki ve çok küçük dz için üst sınır davranışı GUI'de doğrulanmadı ([AJAN], bkz. SPEC §8).
