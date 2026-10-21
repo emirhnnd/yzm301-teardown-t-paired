@@ -23,6 +23,8 @@ def _build():
     p.add_argument("--alpha", default=None)
     p.add_argument("--power", default=None)
     p.add_argument("--n", "--n-total", "--sample-size", dest="n", default=None)
+    # Ortak test düzeneği tüm ailelere --ratio verebilir; eşleştirilmiş testte grup oranı yoktur, değer yok sayılır.
+    p.add_argument("--ratio", "--allocation-ratio", dest="ratio", default=None)
     return p
 
 

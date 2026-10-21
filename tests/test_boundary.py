@@ -64,3 +64,15 @@ def test_invalid_inputs():
     for a in bad:
         code, js, raw = run_cli(*a)
         assert code != 0 and "error" in js, (a, raw)
+
+
+def test_ratio_flag_accepted_and_ignored():
+    """Ortak test düzeneği --ratio 1 gönderebilir; sonuç değişmemeli."""
+    import subprocess, sys, json, os, pathlib
+    root = pathlib.Path(__file__).resolve().parents[1]
+    env = dict(os.environ, PYTHONPATH=str(root / "src"))
+    base = [sys.executable, "-m", "powerlab", "--test", "t-paired", "--mode", "a-priori", "--tails", "2", "--d", "0.5", "--alpha", "0.05", "--power", "0.95"]
+    a = subprocess.run(base, capture_output=True, text=True, env=env)
+    b = subprocess.run(base + ["--ratio", "1"], capture_output=True, text=True, env=env)
+    assert a.returncode == 0 and b.returncode == 0
+    assert json.loads(a.stdout) == json.loads(b.stdout)
