@@ -1,6 +1,20 @@
 # MCP ve GUI yolu: token, süre, doğruluk
 
-**Dürüst durum:** MCP yolu **ölçüldü**. GUI yolu **ölçülemedi, hesaplandı.** G\*Power taşınabilir bir `.exe`; bilgisayar kontrolü (computer use) yalnızca Başlat menüsünde kayıtlı uygulamaları açabiliyor ve G\*Power orada yoktu (`notInstalled`). Bu yüzden 10 soruyu gerçekten ekran görüntüsüyle çözen bir GUI ajanı koşturamadım. Aşağıdaki GUI sayıları gerçek ekran görüntülerinden türetilmiş tahmindir.
+**Dürüst durum:** MCP yolu 10 soruda **ölçüldü**. GUI yolu **1 soruda ölçüldü** (22 Ekim, 19:11): bilgisayar kontrolüyle gerçek G\*Power penceresinde tek bir a-priori analiz çözüldü. 10 soruluk GUI koşusu yapılmadı. Ölçüm n = 1'dir ve genelleme taşımaz. Görüntü tokenları sayaçtan değil, piksel formülünden (genişlik × yükseklik ÷ 750) hesaplandı.
+
+## GUI yolu (ölçülen, n = 1)
+
+Soru: dz = 0,5, alfa = 0,05, güç = 0,80, iki yönlü, a priori. Başlangıç durumu: pencere açık, başka bir analizin sonucu ekranda.
+
+| Ölçüt | Değer |
+|---|---|
+| Duvar saati süresi (ilk ekran görüntüsünden doğru sonuca) | ≈ 26 sn (model gecikmesi dahil, bu bir alt sınır değil) |
+| Model turu / araç çağrısı | 5 (1 ekran görüntüsü, 1 açılır liste, 2 toplu giriş, 1 sonuç okuma) |
+| Alınan görüntü | 2 tam ekran (1456×819 ≈ 1.590 token), 1 yarım ölçekli (≈ 400), 1 yakınlaştırma (≈ 150) → ≈ 3.700 görüntü tokenı |
+| İlk deneme | **hatalı**: üç kez tıklama alanı seçmedi, değerler `0.50.5`, `0.050.2`, `0.80.95` olarak birleşti; ekrandaki sonuç yine de doğru görünüyordu. Ctrl+A ile ikinci denemede girdiler temiz çıktı |
+| Sonuç | N = 34, kritik t = 2,0345153, ncp = 2,9154759, güç = 0,8077775, ekrandan okundu; `oracle` vektör 2 ile aynı |
+
+Yani aynı soruda GUI ≈ **3.700+ token**, MCP ≈ **51 token**: yaklaşık **70 kat**, ve GUI'de bir kere girdi hatası yaşandı (okuma sonucu doğru kalsa da girdiler bozuktu, bu bir ajanın fark etmeyebileceği bir hatadır).
 
 ## MCP yolu (ölçülen)
 
@@ -13,17 +27,9 @@
 
 Son satır dikkat ister: 69k token neredeyse tamamen ajanın sabit yüküdür (sistem istemi, araç şemaları, dosyayı okuma/yazma). Sorunun kendisi ve cevabı yaklaşık 50 token. Yalın bir ajan gövdesiyle bu yük çok daha küçük olur, ama biz onu **ölçmedik**; bu satırı "MCP yolu 50 token" diye okumamak gerekir.
 
-## GUI yolu (hesaplanan, ölçülmedi)
+## Kalan belirsizlik
 
-| Ölçüt | Değer | Dayanak |
-|---|---|---|
-| Bir ekran görüntüsünün token maliyeti | ortalama ≈ 486 (445–738) | senin 40 gerçek G\*Power pencere görüntün (`oracle/screenshots/`), görüntü tokenı ≈ genişlik × yükseklik ÷ 750 |
-| Tam ekran görüntüsü | ≈ 1.500 civarı (tahmin) | 1920×1080'in tipik sınırı |
-| Bir soru için gereken ekran görüntüsü | en az 3 (durum, alanlar dolu, sonuç) | test ailesi seçimi + 4 alan + Calculate + sonucu okuma |
-| Soru başına GUI görüntü tokenı | ≈ 1.500 (3 pencere görüntüsü) ile ≈ 9.000 (6 tam ekran) arası | yukarıdaki çarpım |
-| Süre | ölçülmedi | her ekran görüntüsü bir model turu; G\*Power'ın kendisi anında hesaplar |
-| Doğruluk | ölçülmedi | okuma hatası ekran görüntüsü okumaktan gelir (7 hane) |
-
-## Sonuç
-
-Soru başına: MCP ≈ 50 token (ölçüldü), GUI ≈ 1.500–9.000 token (hesap). Yani aralık **30–180 kat**. Bu oran ödevin "bir ekran görüntüsü yüzlerce, binlerce token" varsayımıyla uyumludur ama bu **bir tahmin**, adım sayısı ve ekran boyutu varsayımına bağlıdır. Gerçek ölçüm için: G\*Power'ı Başlat menüsüne kısayolla ekleyip bilgisayar kontrolüyle 10 soruyu koşturmak ve her turun token sayacını kaydetmek gerekir.
+- GUI ölçümü tek soru ve tek koşu; süre, model gecikmesi ve ekran boyutuna göre değişir.
+- Görüntü tokenı formülden hesaplandı, sayaçtan değil.
+- 10 soruluk GUI karşılaştırması ve GUI doğruluk oranı ölçülmedi.
+- Aralık tahmini (önceki sürümde 1.500–9.000 token/soru) bu ölçümle uyumlu: 3 görüntülük akışta ≈ 3.700.
