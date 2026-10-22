@@ -1,6 +1,6 @@
 # MCP ve GUI yolu: token, süre, doğruluk
 
-**Dürüst durum:** MCP yolu 10 soruda **ölçüldü**. GUI yolu **1 soruda ölçüldü** (22 Ekim, 19:11): bilgisayar kontrolüyle gerçek G\*Power penceresinde tek bir a-priori analiz çözüldü. 10 soruluk GUI koşusu yapılmadı. Ölçüm n = 1'dir ve genelleme taşımaz. Görüntü tokenları sayaçtan değil, piksel formülünden (genişlik × yükseklik ÷ 750) hesaplandı.
+**Dürüst durum:** MCP yolu 10 soruda **ölçüldü**. GUI yolu gerçek G\*Power'da, bilgisayar kontrolüyle **iki koşuda ölçüldü** (22 Ekim): bir tek soruluk saf koşu ve 7 soruluk toplu koşu. 10 sorunun 8'i t-paired'dır (2'si başka test ailesi, GUI'ye girilmedi). Görüntü tokenları sayaçtan değil, piksel formülünden (genişlik × yükseklik ÷ 750) hesaplandı.
 
 ## GUI yolu (ölçülen, n = 1)
 
@@ -14,7 +14,22 @@ Soru: dz = 0,5, alfa = 0,05, güç = 0,80, iki yönlü, a priori. Başlangıç d
 | İlk deneme | **hatalı**: üç kez tıklama alanı seçmedi, değerler `0.50.5`, `0.050.2`, `0.80.95` olarak birleşti; ekrandaki sonuç yine de doğru görünüyordu. Ctrl+A ile ikinci denemede girdiler temiz çıktı |
 | Sonuç | N = 34, kritik t = 2,0345153, ncp = 2,9154759, güç = 0,8077775, ekrandan okundu; `oracle` vektör 2 ile aynı |
 
-Yani aynı soruda GUI ≈ **3.700+ token**, MCP ≈ **51 token**: yaklaşık **70 kat**, ve GUI'de bir kere girdi hatası yaşandı (okuma sonucu doğru kalsa da girdiler bozuktu, bu bir ajanın fark etmeyebileceği bir hatadır).
+Yani aynı soruda GUI ≈ **3.700+ token**, MCP ≈ **51 token**: yaklaşık **70 kat**; GUI'de bir kere girdi hatası yaşandı.
+
+## GUI yolu, toplu koşu (ölçülen, 7 soru)
+
+Pencerenin yeri ve alan konumları ilk koşudan bilindiği için girdiler tek `batch` çağrısında gönderildi. Bu, bir GUI ajanının alabileceği **en iyi durumdur**; tanımadığı bir arayüzde bu kadar ucuz olmaz.
+
+| Ölçüt | Değer |
+|---|---|
+| Soru | 7 (a-priori 4, post-hoc 3; a-priori N ve post-hoc güç) |
+| Duvar saati süresi | ≈ 54 sn toplam, ≈ 7,7 sn/soru (model gecikmesi dahil) |
+| Araç çağrısı | 6 (4 toplu giriş, 2 ekran görüntüsü) |
+| Alınan görüntü | 2 × 0,6 ölçekli ekran (≈ 570 token) + 8 yakınlaştırma (≈ 55 token) ≈ 1.600 token → ≈ **230 token/soru** |
+| Doğruluk | **7/7 doğru**, ekrandan okunan N ya da güç `agent/eval_set.py`'deki bağımsız beklentiyle aynı (1. koşudaki soruyla birlikte 8/8) |
+| Aksama | Bir yakınlaştırma karanlık geldi (uygulama gizlenirken), yeniden ekran görüntüsü gerekti |
+
+Soru başına: MCP ≈ 51 token; GUI ≈ 230 (en iyi durum, toplu) ile ≈ 3.700 (ilk, adım adım) arası. Oran **≈ 4,5× ile ≈ 70×**. Süre: MCP ≈ 5,6 ms (sunucu), GUI ≈ 8–26 sn.
 
 ## MCP yolu (ölçülen)
 
@@ -27,9 +42,9 @@ Yani aynı soruda GUI ≈ **3.700+ token**, MCP ≈ **51 token**: yaklaşık **7
 
 Son satır dikkat ister: 69k token neredeyse tamamen ajanın sabit yüküdür (sistem istemi, araç şemaları, dosyayı okuma/yazma). Sorunun kendisi ve cevabı yaklaşık 50 token. Yalın bir ajan gövdesiyle bu yük çok daha küçük olur, ama biz onu **ölçmedik**; bu satırı "MCP yolu 50 token" diye okumamak gerekir.
 
-## Kalan belirsizlik
+## Sonuç ve kalan belirsizlik
 
-- GUI ölçümü tek soru ve tek koşu; süre, model gecikmesi ve ekran boyutuna göre değişir.
-- Görüntü tokenı formülden hesaplandı, sayaçtan değil.
-- 10 soruluk GUI karşılaştırması ve GUI doğruluk oranı ölçülmedi.
-- Aralık tahmini (önceki sürümde 1.500–9.000 token/soru) bu ölçümle uyumlu: 3 görüntülük akışta ≈ 3.700.
+- Ödevin "ekran görüntüsü yüzlerce, binlerce token" varsayımı **yalnızca adım adım GUI için** doğru çıktı; sabit bir düzeni önceden bilen ve toplu giren bir GUI ajanı çok daha ucuza çözer. Yine de MCP'den ≈ 4,5 kat pahalıdır ve ekran düzeni değişirse bozulur.
+- Görüntü tokenı formülden hesaplandı, sayaç yok. Süreler model gecikmesini içerir.
+- GUI doğruluğu 8/8; ama örnek küçük ve tek bir kullanıcı ekranı.
+- Tek koşu, tek makine; 10 soruluk eşit koşullu karşılaştırma yapılmadı (2 soru GUI'ye girilmedi).

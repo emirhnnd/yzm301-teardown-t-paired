@@ -61,7 +61,7 @@ gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --p
 |---|---|---|
 | Temel: CLI, SPEC, LEDGER, HALLUCINATIONS, AGENT_COST, oracle, testler | 85 | ✅ |
 | MCP sunucusu | +15 | ✅ |
-| AI ajanı | +10 | ✅ LLM çıkarıcı + kalibrasyon + TR/EN ölçüldü; GUI token karşılaştırması 1 soruda ölçüldü (bkz. §9) |
+| AI ajanı | +10 | ✅ LLM çıkarıcı + kalibrasyon + TR/EN ölçüldü; GUI token karşılaştırması 8 soruda ölçüldü (bkz. §9) |
 
 ---
 
@@ -262,7 +262,7 @@ Genel doğruluk 139/140, ECE 0,087. Model **temkinli** (söylediğinden daha sı
 
 Ayrıntı: `agent/calibration/`, `agent/eval_report_llm.md`, `agent/TOKEN_COMPARISON.md`.
 
-**Token karşılaştırması:** MCP yolu **ölçüldü**: araç çağrısı+yanıt ≈ 51 token/soru, sunucu süresi ≈ 5,6 ms, 8/8 doğru. GUI yolu **1 soruda ölçüldü**: ≈ 3.700 görüntü tokenı (formülle), 5 tur, ≈ 26 sn; yani aynı soruda yaklaşık 70 kat. 10 soruluk GUI koşusu yapılmadı (`agent/TOKEN_COMPARISON.md`).
+**Token karşılaştırması:** MCP yolu **ölçüldü**: ≈ 51 token/soru, sunucu ≈ 5,6 ms, 8/8 doğru. GUI yolu gerçek G\*Power'da **ölçüldü** (8 soru): adım adım ≈ 3.700 token/soru, toplu girişle en iyi durumda ≈ 230 token/soru; 8/8 doğru. Yani MCP, GUI'den ≈ 4,5× ile ≈ 70× ucuz (`agent/TOKEN_COMPARISON.md`).
 
 Etiket kümesi: `t2-indep`, `t-paired`, `anova-oneway`, `chi2-contingency`, `multireg-r2`, `ambiguous`, `unsupported`.
 
@@ -295,7 +295,7 @@ Etiket kümesi: `t2-indep`, `t-paired`, `anova-oneway`, `chi2-contingency`, `mul
 - **Kalibrasyon seti benim yazdığım sorulardır.** Sorular ve beklenen etiketler Claude tarafından yazıldı, etiketleyen model de Claude; yanlılık ortak olabilir. Kolay sette tavan etkisi var (%100) ve 140 tahminde yalnızca 1 yanlış var, bu yüzden kalibrasyon eğrisi istatistiksel olarak zayıf.
 - **Kural tabanlı çıkarıcı genelleştirmiyor.** 10 soruya bakılarak yazıldığı için orada 10/10, yeni sorularda 24/40 ve 9/30; yanlış aileyle araç çağırdığı vakalar var. LLM çıkarıcı bunu düzeltiyor, güvenilecek olan odur.
 - **Jev erişimi yoktu; Claude haiku kullanıldı** ve bu, alt ajan olarak çalıştı (`ANTHROPIC_API_KEY` ile programdan doğrudan çağıran `extract_llm` yolu hâlâ ölçülmedi).
-- **GUI karşılaştırması 1 soruda ölçüldü, 10 soruda değil.** Bilgisayar kontrolüyle gerçek G\*Power'da bir analiz çözüldü: ≈ 5 tur, ≈ 3.700 görüntü tokenı (formülle), ≈ 26 sn, ilk girdi denemesi hatalı. MCP ≈ 51 token. Görüntü tokenı sayaçtan değil formülden. Ayrıntı: `agent/TOKEN_COMPARISON.md`.
+- **GUI karşılaştırması gerçek G\*Power'da ölçüldü (8 soru, iki koşu).** Adım adım: ≈ 5 tur, ≈ 3.700 görüntü tokenı, ≈ 26 sn, ilk girdi denemesi hatalı. Toplu (düzen bilinerek): ≈ 230 token/soru, ≈ 8 sn/soru, 7/7 doğru. MCP ≈ 51 token/soru. Görüntü tokenı sayaçtan değil formülden. Ayrıntı: `agent/TOKEN_COMPARISON.md`.
 - **Demo videosu ekran kaydı değildir.** `demo/make_video.py` gerçek motoru ve gerçek komutları çalıştırıp sonuçlarını sahnelere çizer (40 vektörün yan yana tablosu dahil); çıktılar uydurma değildir, betik yeniden üretir. Videoda ses yoktur; sahne etiketleri ve altyazı satırları vardır.
 - **Kenar vektörleri (22 Ekim, `oracle/oracle_boundary.csv`, hepsi tek yönlü):** dz = 0.001 (N = 6182559), dz = 20 (güç 1), dz = 21 (hata `Effect size d is outside the admissible range (-20, 20).`) ve alfa = 0.2 G\*Power ile birebir eşleşti. **Bir bilinen sapma:** dz = 0.00001 için G\*Power N = 61823520102 verir (gerçek güç 0.7999842, hedefin altında; çok büyük df'de kendi sayısal sınırı), klon matematiksel kökü 61825572322 verir. Test xfail olarak işaretli; nedeni REA ile incelenmedi. Alfa/güç için kesin geçerlilik aralıkları yine denenmedi (`[AJAN]`, SPEC §8).
 - **n1 / n2.** İç temsil `[REA]` ile kanıtlandı: motor eşleştirilmiş testte `n1 = n2 = N/2` tutar, toplam `N = n1 + n2` (LEDGER 12, 29; adresler 0x4bdee0, 0x4d38b0, 0x5cac90, 0x5cac94). Sözleşme eşleştirilmiş test için `n1`/`n2` istemediğinden CLI bunları yazmaz; bilgi yalnızca kanıt kaydıdır (LEDGER 30).
