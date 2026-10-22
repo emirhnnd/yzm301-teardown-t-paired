@@ -33,7 +33,7 @@
    "tails": 2,
    "dz": 0.6,
    "alpha": 0.05,
-   "n": 25
+   "n_total": 25
   },
   "n": null,
   "power": 0.8207219
@@ -46,7 +46,7 @@
    "tails": 2,
    "dz": 0.4,
    "alpha": 0.01,
-   "n": 40
+   "n_total": 40
   },
   "n": null,
   "power": 0.4390805
@@ -85,7 +85,7 @@
    "tails": 2,
    "dz": 1.0,
    "alpha": 0.05,
-   "n": 12
+   "n_total": 12
   },
   "n": null,
   "power": 0.8828916

@@ -27,7 +27,7 @@ Adresler Ghidra'nın verdiği `FUN_xxxxxxxx` adresleridir. Alıntılar kısadır
 | 9 | [REA] | Mod 0 amaç fonksiyonu f(N) = güç(dz, alfa, N) − hedef güç ([+0xb8]). N çözülürken kök aranan fonksiyon budur | 0x4968d0 |
 | 10 | [REA] | Mod 3 amaç fonksiyonu alfayı çözer: f(alfa)=güç(dz, alfa, N) − hedef. (Bu yuva N'yi DEĞİL alfayı çözer; bkz. HALLUCINATIONS #3) | 0x4d37f0, çözücü giriş 0x4960b0 |
 | 11 | [REA] | Genel güç hesabı: n1, n2 ve toplam N (= n1+n2, [+0xe8]) saklanır, df için sanal yuva 73 çağrılır; bayt [+0x2a9]==0 ise alfa ikiye bölünür (iki yönlü); kritik değer merkezi, güç merkezsel olmayan dağılımdan | 0x4d38b0 |
-| 12 | [REA] | Güç(dz, alfa, N) sanal yuva 12 (0x4bdee0): n1 = N/2, n2 = N/2 ile genel güç hesabını çağırır | 0x4bdee0 |
+| 12 | [REA] | Güç(dz, alfa, N) sanal yuva 12: n1 = N/2, n2 = N/2 ile yuva 13'ü çağırır. `PowerTPairedMean` tablosunda (0x5cac60) yuva 12 = 0x5cac90 → 0x4bdee0, yuva 13 = 0x5cac94 → 0x4d38b0 (xref ile doğrulandı, 2026-10-22) | 0x4bdee0, 0x5cac90, 0x5cac94 |
 | 13 | [REA] | df = k[idx]·N − (1, bayt [+0x358]==0 ise). k tablosu 0x6096a8: k[0]=1.0, k[1]=1.0, k[2]=1.5; varsayılan idx 0 ⇒ df = N − 1 | 0x4db950, 0x6096a8, 0x4dc230 |
 | 14 | [REA] | ncp δ = dz·√(k[idx]·N); [+0x360] > 0 ise k, (1 − N/[+0x360]) ile bölünür (varsayılan −1 ⇒ düzeltme yok) | 0x4dc1b0 (aynı yapı 0x4dbdc0, 0x4dc0b0, 0x4dc130) |
 | 15 | [DOK] | Eşleşmiş t testi: merkezsel olmayan t, df = N−1, δ = dz√N (Faul ve ark. 2007, 2009) | yayın |
@@ -54,6 +54,8 @@ Adresler Ghidra'nın verdiği `FUN_xxxxxxxx` adresleridir. Alıntılar kısadır
 | 26 | [REA] | Etki büyüklüğü kontrolü (PairedMean tablosu +0x104, 0x4db990): a priori modda \|dz\| < 1e-5 ise "In an a priori analysis, the absolute value of the\neffect size be greater than 0.00001." Ardından dz ∈ [−20, 20] aralığı denetlenir ("... is outside the admissible range (−20, 20)") | 0x4db990 (ikizi 0x4da5d0), 0x487b70, dize 0x5cb510 |
 | 27 | [KÂHİN] | Güç = alfa geçerli (vektör 26). Güç 0,04 < alfa=0,05 hatalı (vektör 27). dz = 0 hatalı (vektör 28). Post hoc N = 2 hatalı (vektör 36) | oracle ekran görüntüleri |
 | 28 | [KÂHİN] | Negatif dz: N, \|dz\| ile aynı; ekranda kritik t ve δ negatif işaretli (vektör 29, 30) | oracle 29, 30 |
+| 29 | [REA] | Eşleştirilmiş testte motor içinde **n1 = n2 = N/2**; toplam N = n1 + n2 olarak [+0xe8]'e yazılır (n1 [+0xc0], n2 [+0xc8]). Yani df ve ncp'deki N, toplamdır ve çift sayısına eşittir. Arayüz yalnızca toplam örneklem büyüklüğünü gösterir | 0x4bdee0 (n1 = n2 = N·0,5), 0x4d38b0 (n1+n2), 0x5cac90, 0x5cac94 |
+| 30 | [AJAN] | CONTRACT.md v1.0.0 eşleştirilmiş test için `n1`/`n2` çıktısı istemez (a-priori: ncp, critical_t, df, n_total, actual_power; post-hoc: ncp, critical_t, df, power); CLI bu yüzden yalnızca `n_total` yazar. Motorun iç temsili (29. satır) N/2 + N/2'dir | oracle'da n1/n2 yok |
 
 ## Bilinmeyenler (çözülmedi; [AJAN] olarak SPEC'te işaretli)
 
@@ -61,3 +63,4 @@ Adresler Ghidra'nın verdiği `FUN_xxxxxxxx` adresleridir. Alıntılar kısadır
 - dz üst sınırının ([−20, 20]) PairedMean için kesin değeri: sabitler okundu, ancak sınıra yakın GUI vektörü alınmadı.
 - Alfa ve güç için "admissible range" kenar değerleri (örn. alfa=0, alfa=1): GUI vektörü alınmadı.
 - Çok büyük N'de (> ~10⁷) Brent'in 300 yineleme sınırı: 78491'e kadar gözlendi.
+- n1 / n2: iç temsil `[REA]` ile kanıtlandı (29. satır); sözleşme bu alanları istemediği için CLI yazmaz (30. satır, `[AJAN]`).

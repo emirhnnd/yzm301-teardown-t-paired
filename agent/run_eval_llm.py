@@ -20,7 +20,7 @@ for e, r in zip(exp, recs):
         a = r.get("args", {})
         p_ok = a.get("mode") == e["params"]["mode"] and all(abs(float(a.get(x, -1)) - float(v)) < 1e-9 for x, v in e["params"].items() if x != "mode")
         res = r.get("result", {})
-        n = (res.get("n_total") == e["n"]) if e["n"] is not None else abs(res.get("actual_power", -1) - e["power"]) < 5e-8
+        n = (res.get("n_total") == e["n"]) if e["n"] is not None else abs(res.get("power", -1) - e["power"]) < 5e-8
         tok += (len(json.dumps(r["args"])) + len(json.dumps(r["result"]))) // 4
     fam_ok += bool(f_ok); par_ok += bool(p_ok); n_ok += bool(n)
     rows.append((e["question"][:70], e["family"], r["family"], r["confidence"], r["decision"], p_ok, n, r.get("seconds")))

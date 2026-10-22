@@ -28,7 +28,12 @@ power(N, tails, dz, alpha):
 ```
 `nct_cdf` merkezsel olmayan t dağılımının birikimli dağılımıdır (scipy `scipy.stats.nct.cdf`, `scipy.stats.t.ppf`). [L11][L12][L16]
 
-Çıktı alanları (tamsayı N için): `critical = c` (iki yönlü: pozitif üst kritik değer), `df = N-1`, `ncp = |dz|*sqrt(N)`; **dz < 0 ise `critical` ve `ncp` negatif işaretli yazılır** ve güç `|dz|` ile aynıdır. [L28][KÂHİN]
+Çıktı alanları (tamsayı N için): `critical_t = c` (iki yönlü: pozitif üst kritik değer), `df = N-1`, `ncp = |dz|*sqrt(N)`; **dz < 0 ise `critical_t` ve `ncp` negatif işaretli yazılır** ve güç `|dz|` ile aynıdır. [L28][KÂHİN]
+
+### 1.2 n1 / n2 ve toplam N
+
+Motor içinde eşleştirilmiş test için `n1 = n2 = N/2` tutulur ve toplam `N = n1 + n2`'dir; `df`, `ncp` ve yukarıdaki güç fonksiyonu bu toplam `N`'i (= çift sayısını) kullanır. Referans arayüz yalnızca toplam örneklem büyüklüğünü gösterir. [L12][L29][REA]
+CONTRACT.md eşleştirilmiş test için `n1`/`n2` çıktısı istemez; bu nedenle CLI bu alanları yazmaz, yalnızca `n_total` yazar. İç temsil bilgisi yalnızca kanıt kaydıdır. [L30][AJAN]
 
 ## 2. a-priori (N hesapla)
 
@@ -55,7 +60,7 @@ if lo < LO: lo = LO
 2. **Kök**: `[lo, hi]` aralığında Brent yöntemiyle `f(N*) = 0` çözülür (en çok 300 yineleme, göreli duyarlık ≈ 2.2e-16; durma: `f=0` ya da yarım aralık `<= |x|·1.11e-16`). İşaret değişimi yoksa kök bulucu `0` döndürür. Yineleme sınırı dolarsa son nokta döner.
 3. **Yuvarlama**: `r(x) = ceil( floor(x·1e10 + 0.5) / 1e10 )`. Yani önce 10 ondalığa yuvarla, sonra yukarı yuvarla. `N* ← r(N*)`.
 4. **Alt sınır kıstırma**: `N* < lo` ise (alt sınır 2) `N* ← r(lo)` (= 2).
-5. `N = N*` (tamsayı). `actual_power = power(N, tails, dz, alpha)`; `critical`, `df`, `ncp` yukarıdaki gibi.
+5. `N = N*` (tamsayı). `actual_power = power(N, tails, dz, alpha)`; `critical_t`, `df`, `ncp` yukarıdaki gibi.
 
 Sonuç `N`, "hedef gücü sağlayan en küçük tamsayı" ile **bütün gözlenen vektörlerde aynıdır**, ancak 3. adımdaki 10 ondalık yuvarlama nedeniyle `N*` bir tamsayının en çok 5e-11 üstündeyse o tamsayı seçilir. [L20][L23]
 Kütüphaneler (R `pwr`, `statsmodels`) kesirli N verir; bu referans her zaman yukarı yuvarlar. [KÂHİN]
@@ -67,15 +72,15 @@ Kütüphaneler (R `pwr`, `statsmodels`) kesirli N verir; bu referans her zaman y
 
 ## 3. post-hoc (güç hesapla)
 
-`N` tamsayı verilir; `actual_power = power(N, tails, dz, alpha)`; ek olarak `critical`, `df`, `ncp` döner. `power` girdisi yoktur. [KÂHİN]
+`n_total` (N) tamsayı verilir; hesaplanan güç `power = power(N, tails, dz, alpha)` olarak döner; ek olarak `critical_t`, `df`, `ncp`. `power` girdisi yoktur. [KÂHİN]
 
 ## 4. Geçersiz girdi davranışı
 
-Hata mesajlarının **ilk satırı** referanstan gözlenmiştir. CLI hatada çıktıyı `{"error": "<mesaj>"}` tek satır JSON olarak verir, çıkış kodu ≠ 0.
+Hata mesajlarının **ilk satırı** referanstan gözlenmiştir. CLI hatada çıktıyı `{"error": "<mesaj>", "code": "<KOD>", "field": "<alan>"}` tek satır JSON olarak verir (CONTRACT.md v1.0.0); geçersiz girdide çıkış kodu 2, iç hatada 1.
 
 | Koşul | Mod | Mesaj | Kanıt |
 |---|---|---|---|
-| `alpha > power` (`alpha == power` geçerli) | a-priori | `Power must be greater than or equal to alpha.` | [L24] [KÂHİN] vektör 26, 27 |
+| `alpha > power` (`alpha == power` geçerli) | a-priori | `Power must be greater than or equal to alpha.` (`INCONSISTENT`) | [L24] [KÂHİN] vektör 26, 27 |
 | `abs(dz) < 1e-5` (tam 1e-5 geçerli) | a-priori | `In an a priori analysis, the absolute value of the effect size be greater than 0.00001.` | [L26] [KÂHİN] vektör 28 |
 | `N < 3` ya da `N > 2147483646` (N tamsayı) | post-hoc | `Total sample size is outside the admissible range (3, 2147483646)` | [L25] [KÂHİN] vektör 36 |
 | `dz` ∉ [−20, 20] | iki mod | `... is outside the admissible range (-20, 20)` | [L26] [AJAN] kenar vektörü yok |
@@ -86,34 +91,39 @@ Not: a-priori modda `N = 2` **geçerli** bir sonuçtur (alt sınır kıstırma),
 
 ## 5. CLI sözleşmesi
 
-Komut (iki ad aynı programdır): `gpower-clone` ve `powerlab` (ayrıca `python -m powerlab`).
+Komut (iki ad aynı programdır): `gpower-clone` ve `powerlab` (ayrıca `python -m powerlab`). Biçim CONTRACT.md v1.0.0'a uyar.
 
 ```
 gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --power 0.95
-gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n 34
+gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n_total 34
 ```
 
-- `--dz` yerine `--d` de kabul edilir. Post-hoc örneklem büyüklüğü için `--n`, `--n-total` ya da `--sample-size` kabul edilir.
-- `--mode` değerleri `a-priori` ve `post-hoc` (alt çizgili `a_priori`, `post_hoc` ve `apriori`, `posthoc` de kabul).
-- `--test` yalnızca `t-paired` desteklenir; başka değerde hata.
-- Başarılı çıktı **tek satır JSON** ve çıkış kodu 0. Alanlar: `n_total` (=N), `n1` (=N), `n2` (=N), `actual_power`, `power` (=`actual_power`), `critical`, `df`, `ncp`. Gerçek sayılar **7 ondalığa** yuvarlanır; `n_total`, `n1`, `n2`, `df` tamsayı.
-- Örnek (vektör 2): `{"n1":34,"n2":34,"n_total":34,"actual_power":0.8077775,"power":0.8077775,"critical":2.0345153,"df":33,"ncp":2.9154759}`
+- Bayrak adları sözleşmedeki alan adlarıdır: `--test --mode --tails --dz --alpha --power --n_total`. Varsayılan değer yoktur; moda ait her alan verilmelidir (`--n-total` tireli yazım da kabul). `--d`, `--n`, `--sample-size` gibi takma adlar yoktur.
+- `a-priori` alanları: `tails dz alpha power`. `post-hoc` alanları: `tails dz alpha n_total`. Eksik alan `MISSING_PARAM`; tanınmayan ya da moda ait olmayan alan `UNKNOWN_PARAM`.
+- Tek istisna: `--ratio` kabul edilir ve yok sayılır (ortak test düzeneği tüm ailelere verebilir; eşleştirilmiş testte grup oranı yoktur). [AJAN]
+- `--mode` yalnızca `a-priori` ve `post-hoc`; `compromise`, `criterion`, `sensitivity` uygulanmadı (`UNSUPPORTED`). `--test` yalnızca `t-paired`; başka değer `UNSUPPORTED`.
+- `--version` tek satır JSON verir: `contract_version`, `name`, `engine`.
+- Başarılı çıktı **tek satır JSON**, çıkış kodu 0, günlükler stderr'e. Gerçek sayılar tam çift duyarlıkla, yuvarlanmadan yazılır; `n_total` ve `df` JSON tamsayısıdır.
+  - a-priori: `ncp`, `critical_t`, `df`, `n_total`, `actual_power`.
+  - post-hoc: `ncp`, `critical_t`, `df`, `power`.
+- Hata: `{"error","code","field"}`; kodlar `MISSING_PARAM`, `UNKNOWN_PARAM`, `INVALID_VALUE`, `OUT_OF_RANGE`, `INCONSISTENT`, `UNSUPPORTED`, `NO_SOLUTION`. Çıkış kodu 2 (geçersiz girdi) ya da 1 (iç hata).
+- Örnek (vektör 2, post-hoc): `{"ncp":2.9154759474226504,"critical_t":2.0345152974493383,"df":33,"power":0.8077775012792737}`. Referans değerler 7 basamakta yazıldığından testler 5e-8 toleransla karşılaştırır.
 
 ## 6. Kabul ölçütleri (Gherkin)
 
 ```gherkin
 Feature: a-priori N hesabı, t-paired
 
-  Scenario Outline: referans vektörlerle birebir N, df ve 7 basamakta diğer değerler
+  Scenario Outline: referans vektörlerle birebir N, df ve 5e-8 içinde diğer değerler
     When "gpower-clone --test t-paired --mode a-priori --tails <tails> --dz <dz> --alpha <alpha> --power <power>" çalıştırılır
     Then n_total tam olarak <n_total> olmalı
     And df tam olarak <df> olmalı
     And actual_power <actual_power> değerine 5e-8 içinde eşit olmalı
-    And critical <critical> değerine 5e-8 içinde eşit olmalı
+    And critical_t <critical_t> değerine 5e-8 içinde eşit olmalı
     And ncp <ncp> değerine 5e-8 içinde eşit olmalı
 
     Examples:
-      | tails | dz | alpha | power | n_total | df | actual_power | critical | ncp |
+      | tails | dz | alpha | power | n_total | df | actual_power | critical_t | ncp |
       | 2 | 0.5 | 0.05 | 0.95 | 54 | 53 | 0.9502120 | 2.0057460 | 3.6742346 |
       | 2 | 0.5 | 0.05 | 0.80 | 34 | 33 | 0.8077775 | 2.0345153 | 2.9154759 |
       | 1 | 0.5 | 0.05 | 0.80 | 27 | 26 | 0.8118316 | 1.7056179 | 2.5980762 |
@@ -148,14 +158,14 @@ Feature: a-priori N hesabı, t-paired
 Feature: post-hoc güç hesabı, t-paired
 
   Scenario Outline: referans vektörlerle güç
-    When "gpower-clone --test t-paired --mode post-hoc --tails <tails> --dz <dz> --alpha <alpha> --n <n>" çalıştırılır
+    When "gpower-clone --test t-paired --mode post-hoc --tails <tails> --dz <dz> --alpha <alpha> --n_total <n_total>" çalıştırılır
     Then df tam olarak <df> olmalı
-    And actual_power <power> değerine 5e-8 içinde eşit olmalı
-    And critical <critical> değerine 5e-8 içinde eşit olmalı
+    And power <power> değerine 5e-8 içinde eşit olmalı
+    And critical_t <critical_t> değerine 5e-8 içinde eşit olmalı
     And ncp <ncp> değerine 5e-8 içinde eşit olmalı
 
     Examples:
-      | tails | dz | alpha | n | df | power | critical | ncp |
+      | tails | dz | alpha | n_total | df | power | critical_t | ncp |
       | 2 | 0.5 | 0.05 | 34 | 33 | 0.8077775 | 2.0345153 | 2.9154759 |
       | 2 | 0.5 | 0.05 | 10 | 9 | 0.2931756 | 2.2621572 | 1.5811388 |
       | 1 | 0.5 | 0.05 | 27 | 26 | 0.8118316 | 1.7056179 | 2.5980762 |
@@ -172,18 +182,23 @@ Feature: geçersiz girdiler
 
   Scenario Outline: hatalı girdi hata JSON'u ve sıfırdan farklı çıkış kodu verir
     When "<komut>" çalıştırılır
-    Then çıktı {"error": ...} biçiminde tek satır JSON olmalı
-    And çıkış kodu 0 olmamalı
+    Then çıktı {"error", "code", "field"} biçiminde tek satır JSON olmalı
+    And çıkış kodu 2 olmalı
+    And code alanı <kod> olmalı
     And error alanı "<mesaj_parçası>" içermeli
 
     Examples:
-      | komut | mesaj_parçası |
-      | gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --power 0.04 | Power must be greater than or equal to alpha |
-      | gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0 --alpha 0.05 --power 0.80 | effect size be greater than 0.00001 |
-      | gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n 2 | outside the admissible range (3, 2147483646) |
-      | gpower-clone --test t-paired --mode post-hoc --tails 3 --dz 0.5 --alpha 0.05 --n 20 | tails |
-      | gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 1.5 --power 0.8 | alpha |
-      | gpower-clone --test t2-indep --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --power 0.8 | test |
+      | komut | mesaj_parçası | kod |
+      | gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --power 0.04 | Power must be greater than or equal to alpha | INCONSISTENT |
+      | gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0 --alpha 0.05 --power 0.80 | effect size be greater than 0.00001 | OUT_OF_RANGE |
+      | gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n_total 2 | outside the admissible range (3, 2147483646) | OUT_OF_RANGE |
+      | gpower-clone --test t-paired --mode post-hoc --tails 3 --dz 0.5 --alpha 0.05 --n_total 20 | tails | INVALID_VALUE |
+      | gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 1.5 --power 0.8 | alpha | OUT_OF_RANGE |
+      | gpower-clone --test t2-indep --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --power 0.8 | test | UNSUPPORTED |
+      | gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 | power | MISSING_PARAM |
+      | gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --power 0.8 --n_total 30 | n_total | UNKNOWN_PARAM |
+      | gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n_total 20.5 | n_total | INVALID_VALUE |
+      | gpower-clone --test t-paired --mode sensitivity --tails 2 --dz 0.5 --alpha 0.05 --n_total 20 | mode | UNSUPPORTED |
 
 Feature: sınır davranışları
 
@@ -195,7 +210,7 @@ Feature: sınır davranışları
   Scenario: negatif dz aynı N'yi verir, kritik değer ve ncp negatif yazılır
     When "gpower-clone --test t-paired --mode a-priori --tails 2 --dz -0.5 --alpha 0.05 --power 0.80" çalıştırılır
     Then n_total tam olarak 34 olmalı
-    And critical -2.0345153 olmalı
+    And critical_t -2.0345153 olmalı
     And ncp -2.9154759 olmalı
     And actual_power 0.8077775 olmalı
 
@@ -221,3 +236,5 @@ Feature: sınır davranışları
 - `alpha`, `power` için kesin admissible aralığı bilinmiyor: (0,1) varsayıldı. [AJAN]
 - `dz` ±20 sınırının hata metninin ön eki bilinmiyor. [AJAN]
 - Çok küçük dz (örn. 1e-5) için N > 2147483646 olur; referans davranışı gözlenmedi. [AJAN]
+- `n1`/`n2` CLI çıktısında yer almaz (CONTRACT.md istemez); iç temsil için bkz. §1.2.
+- `compromise`, `criterion`, `sensitivity` modları uygulanmadı (sözleşmede bonus).

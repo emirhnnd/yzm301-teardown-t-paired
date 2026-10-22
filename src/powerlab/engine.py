@@ -14,7 +14,12 @@ MAX_ITER = 300
 
 
 class PowerError(ValueError):
-    """Invalid input or unsolvable problem."""
+    """Invalid input or unsolvable problem. `code` and `field` follow CONTRACT.md v1.0.0."""
+
+    def __init__(self, message, code="INVALID_VALUE", field=None):
+        super().__init__(message)
+        self.code = code
+        self.field = field
 
 
 def _upper(c, df, ncp):
@@ -105,27 +110,29 @@ def round_up_n(x):
 
 
 def _num(name, v):
-    if isinstance(v, bool) or v is None:
-        raise PowerError(f"{name} is missing or not a number")
+    if v is None:
+        raise PowerError(f"{name} is missing", "MISSING_PARAM", name)
+    if isinstance(v, bool):
+        raise PowerError(f"{name} is not a number", "INVALID_VALUE", name)
     try:
         v = float(v)
     except (TypeError, ValueError):
-        raise PowerError(f"{name} is missing or not a number")
+        raise PowerError(f"{name} is not a number", "INVALID_VALUE", name)
     if not math.isfinite(v):
-        raise PowerError(f"{name} is missing or not a number")
+        raise PowerError(f"{name} is not a finite number", "INVALID_VALUE", name)
     return v
 
 
 def _common(tails, dz, alpha):
     t = _num("tails", tails)
     if t not in (1.0, 2.0):
-        raise PowerError("tails must be 1 or 2")
+        raise PowerError("tails must be 1 or 2", "INVALID_VALUE", "tails")
     dz = _num("dz", dz)
     alpha = _num("alpha", alpha)
     if not (0.0 < alpha < 1.0):
-        raise PowerError("alpha must be in the open interval (0, 1)")
+        raise PowerError("alpha must be in the open interval (0, 1)", "OUT_OF_RANGE", "alpha")
     if not (-20.0 <= dz <= 20.0):
-        raise PowerError("Effect size dz is outside the admissible range (-20, 20)")
+        raise PowerError("Effect size dz is outside the admissible range (-20, 20)", "OUT_OF_RANGE", "dz")
     return int(t), dz, alpha
 
 
@@ -137,17 +144,16 @@ def _outputs(N, tails, dz, alpha):
     ncp = abs(dz) * math.sqrt(N)
     if dz < 0:
         c, ncp = -c, -ncp
-    return {"n_total": N, "n1": N, "n2": N, "actual_power": p, "power": p,
-            "critical": c, "df": df, "ncp": ncp}
+    return {"n_total": N, "actual_power": p, "critical_t": c, "df": df, "ncp": ncp}
 
 
 def post_hoc(tails, dz, alpha, n):
     tails, dz, alpha = _common(tails, dz, alpha)
-    nv = _num("n", n)
+    nv = _num("n_total", n)
     if nv != math.floor(nv):
-        raise PowerError("n must be an integer")
+        raise PowerError("n_total must be an integer", "INVALID_VALUE", "n_total")
     if nv < N_MIN_POSTHOC or nv > N_MAX:
-        raise PowerError(RANGE_MSG)
+        raise PowerError(RANGE_MSG, "OUT_OF_RANGE", "n_total")
     return _outputs(int(nv), tails, dz, alpha)
 
 
@@ -155,7 +161,7 @@ def _f_factory(tails, dz, alpha, target):
     def f(N):
         v = power(N, tails, dz, alpha) - target
         if math.isnan(v):
-            raise PowerError("numerical failure while solving for N")
+            raise PowerError("numerical failure while solving for N", "NO_SOLUTION", "n_total")
         return v
     return f
 
@@ -164,12 +170,12 @@ def a_priori(tails, dz, alpha, power_target):
     tails, dz, alpha = _common(tails, dz, alpha)
     pw = _num("power", power_target)
     if not (0.0 < pw < 1.0):
-        raise PowerError("power must be in the open interval (0, 1)")
+        raise PowerError("power must be in the open interval (0, 1)", "OUT_OF_RANGE", "power")
     if alpha > pw:
-        raise PowerError("Power must be greater than or equal to alpha.")
+        raise PowerError("Power must be greater than or equal to alpha.", "INCONSISTENT", "power")
     if abs(dz) < 1e-5:
         raise PowerError("In an a priori analysis, the absolute value of the "
-                         "effect size be greater than 0.00001.")
+                         "effect size be greater than 0.00001.", "OUT_OF_RANGE", "dz")
     f = _f_factory(tails, dz, alpha, pw)
     if f(H0) >= 0:
         hi = H0
@@ -184,7 +190,7 @@ def a_priori(tails, dz, alpha, power_target):
             lo = hi
             hi = hi * 1.6
             if lo > N_MAX:
-                raise PowerError(RANGE_MSG)
+                raise PowerError(RANGE_MSG, "NO_SOLUTION", "n_total")
     if lo < LO:
         lo = LO
     root = brent(f, lo, hi)
@@ -192,5 +198,5 @@ def a_priori(tails, dz, alpha, power_target):
     if n < lo:
         n = round_up_n(lo)
     if n > N_MAX:
-        raise PowerError(RANGE_MSG)
+        raise PowerError(RANGE_MSG, "NO_SOLUTION", "n_total")
     return _outputs(int(n), tails, dz, alpha)

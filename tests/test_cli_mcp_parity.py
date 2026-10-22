@@ -7,12 +7,12 @@ ROWS = list(csv.DictReader(open(ROOT / "oracle" / "oracle_vectors.csv")))
 
 def _cli_args(r):
     a = ["--test", "t-paired", "--mode", r["mode"], "--tails", r["tails"], "--dz", r["dz"], "--alpha", r["alpha"]]
-    return a + (["--power", r["power_in"]] if r["mode"] == "a-priori" else ["--n", r["n_in"]])
+    return a + (["--power", r["power_in"]] if r["mode"] == "a-priori" else ["--n_total", r["n_in"]])
 
 def _mcp_args(r):
     d = dict(mode=r["mode"], tails=int(r["tails"]), dz=float(r["dz"]), alpha=float(r["alpha"]))
     if r["mode"] == "a-priori": d["power"] = float(r["power_in"])
-    else: d["n"] = int(r["n_in"])
+    else: d["n_total"] = int(r["n_in"])
     return d
 
 async def _mcp_all(rows):

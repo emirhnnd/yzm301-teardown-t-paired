@@ -9,7 +9,7 @@ def test_power_equals_alpha_gives_n2():
 
 def test_power_below_alpha_errors():
     code, js, _ = run_cli("--test","t-paired","--mode","a-priori","--tails",2,"--dz",0.5,"--alpha",0.05,"--power",0.04)
-    assert code != 0 and "Power must be greater" in js["error"]
+    assert code == 2 and "Power must be greater" in js["error"] and js["code"] == "INCONSISTENT" and js["field"] == "power"
 
 def test_dz_exactly_1e5_not_rejected_by_effect_rule():
     code, js, _ = run_cli("--test","t-paired","--mode","a-priori","--tails",2,"--dz",0.00001,"--alpha",0.05,"--power",0.8)
@@ -23,13 +23,13 @@ def test_dz_just_below_1e5_rejected():
     assert code != 0 and "effect size be greater" in js["error"]
 
 def test_posthoc_n2_rejected_n3_ok():
-    c2, j2, _ = run_cli("--test","t-paired","--mode","post-hoc","--tails",2,"--dz",0.5,"--alpha",0.05,"--n",2)
-    c3, j3, _ = run_cli("--test","t-paired","--mode","post-hoc","--tails",2,"--dz",0.5,"--alpha",0.05,"--n",3)
-    assert c2 != 0 and c3 == 0 and abs(j3["actual_power"] - 0.0841071) < 5e-8
+    c2, j2, _ = run_cli("--test","t-paired","--mode","post-hoc","--tails",2,"--dz",0.5,"--alpha",0.05,"--n_total",2)
+    c3, j3, _ = run_cli("--test","t-paired","--mode","post-hoc","--tails",2,"--dz",0.5,"--alpha",0.05,"--n_total",3)
+    assert c2 == 2 and j2["code"] == "OUT_OF_RANGE" and c3 == 0 and abs(j3["power"] - 0.0841071) < 5e-8
 
 def test_negative_dz_signs():
     code, js, _ = run_cli("--test","t-paired","--mode","a-priori","--tails",1,"--dz",-0.5,"--alpha",0.05,"--power",0.8)
-    assert js["n_total"] == 27 and js["critical"] < 0 and js["ncp"] < 0
+    assert js["n_total"] == 27 and js["critical_t"] < 0 and js["ncp"] < 0
 
 def test_one_tailed_vs_two_tailed_n():
     c1, j1, _ = run_cli("--test","t-paired","--mode","a-priori","--tails",1,"--dz",0.5,"--alpha",0.05,"--power",0.8)
@@ -52,18 +52,18 @@ def test_n_star_just_above_integer():
 
 def test_invalid_inputs():
     bad = [
-        ["--test","t-paired","--mode","post-hoc","--tails",3,"--dz",0.5,"--alpha",0.05,"--n",20],
+        ["--test","t-paired","--mode","post-hoc","--tails",3,"--dz",0.5,"--alpha",0.05,"--n_total",20],
         ["--test","t-paired","--mode","a-priori","--tails",2,"--dz",0.5,"--alpha",1.5,"--power",0.8],
         ["--test","t-paired","--mode","a-priori","--tails",2,"--dz",0.5,"--alpha",0.05,"--power",1.2],
         ["--test","t2-indep","--mode","a-priori","--tails",2,"--dz",0.5,"--alpha",0.05,"--power",0.8],
         ["--test","t-paired","--mode","a-priori","--tails",2,"--alpha",0.05,"--power",0.8],
         ["--test","t-paired","--mode","post-hoc","--tails",2,"--dz",0.5,"--alpha",0.05],
-        ["--test","t-paired","--mode","post-hoc","--tails",2,"--dz",0.5,"--alpha",0.05,"--n",2147483647],
+        ["--test","t-paired","--mode","post-hoc","--tails",2,"--dz",0.5,"--alpha",0.05,"--n_total",2147483647],
         ["--test","t-paired","--mode","a-priori","--tails",2,"--dz","abc","--alpha",0.05,"--power",0.8],
     ]
     for a in bad:
         code, js, raw = run_cli(*a)
-        assert code != 0 and "error" in js, (a, raw)
+        assert code == 2 and set(js) == {"error", "code", "field"}, (a, raw)
 
 
 def test_ratio_flag_accepted_and_ignored():
@@ -71,8 +71,24 @@ def test_ratio_flag_accepted_and_ignored():
     import subprocess, sys, json, os, pathlib
     root = pathlib.Path(__file__).resolve().parents[1]
     env = dict(os.environ, PYTHONPATH=str(root / "src"))
-    base = [sys.executable, "-m", "powerlab", "--test", "t-paired", "--mode", "a-priori", "--tails", "2", "--d", "0.5", "--alpha", "0.05", "--power", "0.95"]
+    base = [sys.executable, "-m", "powerlab", "--test", "t-paired", "--mode", "a-priori", "--tails", "2", "--dz", "0.5", "--alpha", "0.05", "--power", "0.95"]
     a = subprocess.run(base, capture_output=True, text=True, env=env)
     b = subprocess.run(base + ["--ratio", "1"], capture_output=True, text=True, env=env)
     assert a.returncode == 0 and b.returncode == 0
     assert json.loads(a.stdout) == json.loads(b.stdout)
+
+
+def test_error_codes_per_contract():
+    cases = [
+        (["--test","t-paired","--mode","a-priori","--tails",2,"--alpha",0.05,"--power",0.8], "MISSING_PARAM", "dz"),
+        (["--test","t-paired","--mode","a-priori","--tails",2,"--dz",0.5,"--alpha",0.05,"--power",0.8,"--foo",1], "UNKNOWN_PARAM", None),
+        (["--test","t-paired","--mode","post-hoc","--tails",2,"--dz",0.5,"--alpha",0.05,"--n_total",20,"--power",0.8], "UNKNOWN_PARAM", "power"),
+        (["--test","t-paired","--mode","post-hoc","--tails",2,"--dz",0.5,"--alpha",0.05,"--n_total",20.5], "INVALID_VALUE", "n_total"),
+        (["--test","t-paired","--mode","a-priori","--tails",2,"--dz","abc","--alpha",0.05,"--power",0.8], "INVALID_VALUE", "dz"),
+        (["--test","t-paired","--mode","a-priori","--tails",2,"--dz",0.5,"--alpha",1.5,"--power",0.8], "OUT_OF_RANGE", "alpha"),
+        (["--test","t-paired","--mode","compromise","--tails",2,"--dz",0.5,"--alpha",0.05], "UNSUPPORTED", "mode"),
+        (["--test","anova-oneway","--mode","a-priori"], "UNSUPPORTED", "test"),
+    ]
+    for a, c, f in cases:
+        code, js, raw = run_cli(*a)
+        assert code == 2 and js["code"] == c and js["field"] == f, (a, raw)

@@ -1,83 +1,104 @@
+"""gpower-clone komut satırı. CONTRACT.md v1.0.0: katı bayraklar, tek satır JSON, hata kodları, çıkış kodu 0/2/1."""
 import argparse
 import json
 import sys
 
 from .engine import PowerError, a_priori, post_hoc
 
-_MODES = {"a-priori": "a-priori", "a_priori": "a-priori", "apriori": "a-priori",
-          "post-hoc": "post-hoc", "post_hoc": "post-hoc", "posthoc": "post-hoc"}
-_INT_KEYS = ("n_total", "n1", "n2", "df")
+VERSION = {"contract_version": "1.0.0", "name": "gpower-clone-t-paired", "engine": "powerlab"}
+_MODES = ("a-priori", "post-hoc")
+# Mod başına zorunlu alanlar (sözleşme: varsayılan yok, ilgisiz alan hatadır).
+_FIELDS = {"a-priori": ("tails", "dz", "alpha", "power"),
+           "post-hoc": ("tails", "dz", "alpha", "n_total")}
+_ALL = ("test", "mode", "tails", "dz", "alpha", "power", "n_total")
+_KEYS = {"a-priori": ("ncp", "critical_t", "df", "n_total", "actual_power"),
+         "post-hoc": ("ncp", "critical_t", "df", "power")}
+_INT_KEYS = ("n_total", "df")
 
 
 class _Parser(argparse.ArgumentParser):
     def error(self, message):
-        raise PowerError(message)
+        raise PowerError(message, "UNKNOWN_PARAM", None)
 
 
 def _build():
-    p = _Parser(prog="gpower-clone", add_help=True, allow_abbrev=False)
-    p.add_argument("--test", default=None)
-    p.add_argument("--mode", default=None)
-    p.add_argument("--tails", default=None)
-    p.add_argument("--dz", "--d", dest="dz", default=None)
-    p.add_argument("--alpha", default=None)
-    p.add_argument("--power", default=None)
-    p.add_argument("--n", "--n-total", "--sample-size", dest="n", default=None)
-    # Ortak test düzeneği tüm ailelere --ratio verebilir; eşleştirilmiş testte grup oranı yoktur, değer yok sayılır.
-    p.add_argument("--ratio", "--allocation-ratio", dest="ratio", default=None)
+    p = _Parser(prog="gpower-clone", add_help=False, allow_abbrev=False)
+    for k in _ALL:
+        p.add_argument("--" + k, default=None)
+    p.add_argument("--n-total", dest="n_total", default=None)  # tire yazımı da kabul
+    p.add_argument("--ratio", default=None)  # ortak düzenek tüm ailelere verebilir; eşleştirilmiş testte yok sayılır
+    p.add_argument("--version", action="store_true")
     return p
 
 
-def _fmt(res):
+def _fmt(res, mode):
     out = {}
-    for k in ("n1", "n2", "n_total", "actual_power", "power", "critical", "df", "ncp"):
-        v = res[k]
+    for k in _KEYS[mode]:
+        v = res["actual_power" if (mode == "post-hoc" and k == "power") else k]
         if k in _INT_KEYS:
             out[k] = int(v)
         else:
-            r = round(float(v), 7)
-            out[k] = 0.0 if r == 0 else r
+            v = float(v)
+            out[k] = 0.0 if v == 0 else v
     return out
 
 
 def _run(argv):
     a = _build().parse_args(argv)
+    if a.version:
+        return None, VERSION
+    if a.test is None:
+        raise PowerError("--test is required", "MISSING_PARAM", "test")
     if a.test != "t-paired":
-        raise PowerError("unsupported test: only --test t-paired is supported")
-    mode = _MODES.get((a.mode or "").lower())
-    if mode is None:
-        raise PowerError("mode must be a-priori or post-hoc")
-    if mode == "a-priori":
-        return a_priori(a.tails, a.dz, a.alpha, a.power)
-    return post_hoc(a.tails, a.dz, a.alpha, a.n)
+        raise PowerError("unsupported test: only --test t-paired is supported", "UNSUPPORTED", "test")
+    if a.mode is None:
+        raise PowerError("--mode is required", "MISSING_PARAM", "mode")
+    if a.mode not in _MODES:
+        raise PowerError("unsupported mode: use a-priori or post-hoc", "UNSUPPORTED", "mode")
+    need = _FIELDS[a.mode]
+    for k in ("tails", "dz", "alpha", "power", "n_total"):
+        if getattr(a, k) is not None and k not in need:
+            raise PowerError(f"--{k} is not used in mode {a.mode}", "UNKNOWN_PARAM", k)
+    for k in need:
+        if getattr(a, k) is None:
+            raise PowerError(f"--{k} is required in mode {a.mode}", "MISSING_PARAM", k)
+    if a.mode == "a-priori":
+        return a.mode, a_priori(a.tails, a.dz, a.alpha, a.power)
+    return a.mode, post_hoc(a.tails, a.dz, a.alpha, a.n_total)
+
+
+def _err(e):
+    msg = str(e).splitlines()[0] if str(e) else "error"
+    return {"error": msg, "code": getattr(e, "code", "INVALID_VALUE"), "field": getattr(e, "field", None)}
 
 
 def compute(**params):
-    """Aynı çekirdeği CLI dışından çağırmak için (MCP adaptörü kullanır). Hata durumunda {"error": ...} döner."""
+    """Aynı çekirdeği CLI dışından çağırmak için (MCP adaptörü). Hata: {"error","code","field"}."""
     argv = ["--test", "t-paired"]
     for k, v in params.items():
         if v is not None:
-            argv += ["--" + k.replace("_", "-"), str(v)]
+            argv += ["--" + k, str(v)]
     try:
-        return _fmt(_run(argv))
+        mode, res = _run(argv)
+        return _fmt(res, mode)
     except PowerError as e:
-        return {"error": str(e).splitlines()[0] if str(e) else "error"}
+        return _err(e)
 
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else list(argv)
     try:
-        res = _fmt(_run(argv))
-        print(json.dumps(res, separators=(",", ":")))
+        mode, res = _run(argv)
+        print(json.dumps(res if mode is None else _fmt(res, mode), separators=(",", ":")))
         return 0
-    except SystemExit as e:  # --help
+    except SystemExit as e:
         return e.code if isinstance(e.code, int) else 0
     except PowerError as e:
-        print(json.dumps({"error": str(e).splitlines()[0] if str(e) else "error"}))
+        print(json.dumps(_err(e), ensure_ascii=False))
         return 2
-    except Exception as e:  # unexpected
-        print(json.dumps({"error": f"{type(e).__name__}: {e}"}))
-        return 2
+    except Exception as e:  # iç hata
+        print(json.dumps({"error": f"{type(e).__name__}: {e}", "code": "NO_SOLUTION", "field": None}))
+        return 1
 
 
 if __name__ == "__main__":

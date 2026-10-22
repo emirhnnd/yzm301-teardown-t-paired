@@ -1,11 +1,11 @@
 [
  {"id":1,"family":"t-paired","confidence":0.95,"params":{"mode":"a-priori","tails":2,"dz":0.5,"alpha":0.05,"power":0.8}},
  {"id":2,"family":"t-paired","confidence":0.95,"params":{"mode":"a-priori","tails":1,"dz":0.3,"alpha":0.05,"power":0.9}},
- {"id":3,"family":"t-paired","confidence":0.95,"params":{"mode":"post-hoc","tails":2,"dz":0.6,"alpha":0.05,"n":25}},
- {"id":4,"family":"t-paired","confidence":0.95,"params":{"mode":"post-hoc","tails":2,"dz":0.4,"alpha":0.01,"n":40}},
+ {"id":3,"family":"t-paired","confidence":0.95,"params":{"mode":"post-hoc","tails":2,"dz":0.6,"alpha":0.05,"n_total":25}},
+ {"id":4,"family":"t-paired","confidence":0.95,"params":{"mode":"post-hoc","tails":2,"dz":0.4,"alpha":0.01,"n_total":40}},
  {"id":5,"family":"t-paired","confidence":0.95,"params":{"mode":"a-priori","tails":2,"dz":0.8,"alpha":0.05,"power":0.95}},
  {"id":6,"family":"t-paired","confidence":0.95,"params":{"mode":"a-priori","tails":2,"dz":0.25,"alpha":0.05,"power":0.85}},
- {"id":7,"family":"t-paired","confidence":0.95,"params":{"mode":"post-hoc","tails":2,"dz":1.0,"alpha":0.05,"n":12}},
+ {"id":7,"family":"t-paired","confidence":0.95,"params":{"mode":"post-hoc","tails":2,"dz":1.0,"alpha":0.05,"n_total":12}},
  {"id":8,"family":"t-paired","confidence":0.95,"params":{"mode":"a-priori","tails":1,"dz":0.35,"alpha":0.025,"power":0.8}},
  {"id":9,"family":"t2-indep","confidence":0.95,"params":null},
  {"id":10,"family":"anova-oneway","confidence":0.9,"params":null}

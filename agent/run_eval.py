@@ -18,7 +18,7 @@ def main(extractor="rules"):
             p_ok = all(abs(float(a.get(k, -1)) - float(v)) < 1e-9 for k, v in e["params"].items() if k != "mode") and a.get("mode") == e["params"]["mode"]
             res = r.get("result", {})
             if e["n"] is not None: n = res.get("n_total") == e["n"]
-            else: n = abs(res.get("actual_power", -1) - e["power"]) < 5e-8
+            else: n = abs(res.get("power", -1) - e["power"]) < 5e-8
             tok_mcp += (len(json.dumps(r["args"])) + len(json.dumps(r["result"]))) // 4
         fam_ok += bool(f_ok); par_ok += bool(p_ok); n_ok += bool(n)
         rows.append((e["question"][:70], e["family"], r["family"], r["decision"], p_ok, n))

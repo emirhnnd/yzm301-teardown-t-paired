@@ -14,7 +14,7 @@ def _args(r):
     if r["mode"] == "a-priori":
         a += ["--power", r["power_in"]]
     else:
-        a += ["--n", r["n_in"]]
+        a += ["--n_total", r["n_in"]]
     return a
 
 @pytest.mark.parametrize("r", OK, ids=[f"v{r['id']}-{r['mode']}" for r in OK])
@@ -23,18 +23,18 @@ def test_vector(r):
     assert code == 0, js
     if r["mode"] == "a-priori":
         assert js["n_total"] == int(r["n_total"])
-        assert js["n1"] == js["n2"] == int(r["n_total"])
+        assert abs(js["actual_power"] - float(r["actual_power"])) <= TOL
     else:
-        assert js["n_total"] == int(r["n_in"])
+        assert "n_total" not in js
+        assert abs(js["power"] - float(r["actual_power"])) <= TOL
     assert js["df"] == int(r["df"])
-    assert abs(js["actual_power"] - float(r["actual_power"])) <= TOL
-    assert abs(js["critical"] - float(r["critical_t"])) <= TOL
+    assert abs(js["critical_t"] - float(r["critical_t"])) <= TOL
     assert abs(js["ncp"] - float(r["ncp"])) <= TOL
 
 @pytest.mark.parametrize("r", ERR, ids=[f"v{r['id']}-error" for r in ERR])
 def test_error_vector(r):
     code, js, _ = run_cli(*_args(r))
-    assert code != 0
+    assert code == 2
     assert "error" in js
     key = r["notes"].replace("ERROR: ", "").split("\n")[0]
     # mesajın ayırt edici parçası

@@ -7,13 +7,13 @@ mcp = FastMCP("powerlab")
 
 @mcp.tool()
 def power_analysis_t_paired(mode: str, tails: int, dz: float, alpha: float,
-                            power: float | None = None, n: int | None = None) -> dict:
+                            power: float | None = None, n_total: int | None = None) -> dict:
     """Eşleştirilmiş (bağımlı) iki ortalama için t testi güç analizi.
     mode="a-priori": power verilir, gerekli çift sayısı N hesaplanır.
-    mode="post-hoc": n (çift sayısı) verilir, güç hesaplanır.
+    mode="post-hoc": n_total (çift sayısı) verilir, güç hesaplanır.
     dz: etki büyüklüğü (fark ortalaması / fark standart sapması), tails: 1 ya da 2.
-    Dönüş: n_total, n1, n2, actual_power, power, critical, df, ncp ya da {"error": ...}."""
-    return compute(mode=mode, tails=tails, dz=dz, alpha=alpha, power=power, n=n)
+    Dönüş a-priori: ncp, critical_t, df, n_total, actual_power; post-hoc: ncp, critical_t, df, power; hata: {error, code, field}."""
+    return compute(mode=mode, tails=tails, dz=dz, alpha=alpha, power=power, n_total=n_total)
 
 
 def main():

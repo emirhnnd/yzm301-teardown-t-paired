@@ -51,7 +51,7 @@ def run(cmd):
 
 def test_tables_parsed():
     assert len(TABLES) == 3
-    assert len(TABLES[0]) == 28 and len(TABLES[1]) == 9 and len(TABLES[2]) == 6
+    assert len(TABLES[0]) == 28 and len(TABLES[1]) == 9 and len(TABLES[2]) == 10
 
 
 @pytest.mark.parametrize("row", TABLES[0], ids=lambda r: "-".join(r.values())[:40])
@@ -60,51 +60,53 @@ def test_a_priori(row):
            f"--dz {row['dz']} --alpha {row['alpha']} --power {row['power']}")
     code, o = run(cmd)
     assert code == 0
-    assert o["n_total"] == int(row["n_total"]) == o["n1"] == o["n2"]
+    assert list(o) == ["ncp", "critical_t", "df", "n_total", "actual_power"]
+    assert o["n_total"] == int(row["n_total"])
     assert o["df"] == int(row["df"])
-    for k in ("actual_power", "critical", "ncp"):
+    for k in ("actual_power", "critical_t", "ncp"):
         assert abs(o[k] - float(row[k])) <= TOL, k
-    assert o["power"] == o["actual_power"]
 
 
 @pytest.mark.parametrize("row", TABLES[1], ids=lambda r: "-".join(r.values())[:40])
 def test_post_hoc(row):
     cmd = (f"gpower-clone --test t-paired --mode post-hoc --tails {row['tails']} "
-           f"--dz {row['dz']} --alpha {row['alpha']} --n {row['n']}")
+           f"--dz {row['dz']} --alpha {row['alpha']} --n_total {row['n_total']}")
     code, o = run(cmd)
     assert code == 0
     assert o["df"] == int(row["df"])
-    for k in ("critical", "ncp"):
+    assert list(o) == ["ncp", "critical_t", "df", "power"]
+    for k in ("critical_t", "ncp"):
         assert abs(o[k] - float(row[k])) <= TOL, k
-    assert abs(o["actual_power"] - float(row["power"])) <= TOL
+    assert abs(o["power"] - float(row["power"])) <= TOL
 
 
 @pytest.mark.parametrize("row", TABLES[2], ids=lambda r: r["mesaj_parçası"][:30])
 def test_errors(row):
     code, o = run(row["komut"])
-    assert code != 0 and code == 2
-    assert list(o) == ["error"]
+    assert code == 2
+    assert list(o) == ["error", "code", "field"]
     assert row["mesaj_parçası"] in o["error"]
+    assert o["code"] == row["kod"]
 
 
 def test_error_exact_messages():
     assert engine.RANGE_MSG in run(
-        "gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n 2")[1]["error"]
+        "gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n_total 2")[1]["error"]
 
 
 def test_example_line_exact():
-    cmd = "gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n 34"
+    cmd = "gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n_total 34"
     r = subprocess.run([sys.executable, "-m", "powerlab"] + shlex.split(cmd)[1:],
                        capture_output=True, text=True)
     assert r.returncode == 0
-    assert r.stdout.strip() == ('{"n1":34,"n2":34,"n_total":34,"actual_power":0.8077775,'
-                                '"power":0.8077775,"critical":2.0345153,"df":33,"ncp":2.9154759}')
+    assert r.stdout.strip() == ('{"ncp":2.9154759474226504,"critical_t":2.0345152974493383,'
+                                '"df":33,"power":0.8077775012792737}')
 
 
 def test_boundaries():
     assert run("gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --power 0.05")[1]["n_total"] == 2
     o = run("gpower-clone --test t-paired --mode a-priori --tails 2 --dz -0.5 --alpha 0.05 --power 0.80")[1]
-    assert (o["n_total"], o["critical"], o["ncp"], o["actual_power"]) == (34, -2.0345153, -2.9154759, 0.8077775)
+    assert (o["n_total"], round(o["critical_t"], 7), round(o["ncp"], 7), round(o["actual_power"], 7)) == (34, -2.0345153, -2.9154759, 0.8077775)
     assert engine.power(33, 2, 0.5, 0.05) < 0.80 <= engine.power(34, 2, 0.5, 0.05)
     assert engine.round_up_n(27 + 3e-11) == 27
     assert engine.round_up_n(27 + 6e-11) == 28
@@ -115,8 +117,21 @@ def test_boundaries():
         engine.post_hoc(2, 21, 0.05, 10)
 
 
-def test_aliases():
-    a = run("powerlab --test t-paired --mode post_hoc --tails 2 --d 0.5 --alpha 0.05 --sample-size 34")[1]
-    b = run("powerlab --test t-paired --mode posthoc --tails 2 --dz 0.5 --alpha 0.05 --n-total 34")[1]
-    assert a == b
-    assert run("powerlab --test t-paired --mode apriori --tails 2 --dz 0.5 --alpha 0.05 --power 0.8")[1]["n_total"] == 34
+def test_no_aliases_strict():
+    for bad in ("--d 0.5", "--n 34", "--sample-size 34"):
+        code, o = run(f"powerlab --test t-paired --mode post-hoc --tails 2 --alpha 0.05 --n_total 34 {bad}")
+        assert code == 2 and o["code"] == "UNKNOWN_PARAM"
+    code, o = run("powerlab --test t-paired --mode post_hoc --tails 2 --dz 0.5 --alpha 0.05 --n_total 34")
+    assert code == 2 and o["code"] == "UNSUPPORTED"
+    assert run("powerlab --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n-total 34")[0] == 0
+
+
+def test_full_precision_and_types():
+    o = run("powerlab --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --power 0.8")[1]
+    assert isinstance(o["n_total"], int) and isinstance(o["df"], int)
+    assert o["ncp"] == 0.5 * 34 ** 0.5 and len(repr(o["critical_t"])) > 9
+
+
+def test_version_and_exit_codes():
+    code, o = run("powerlab --version")
+    assert code == 0 and o["contract_version"] == "1.0.0"

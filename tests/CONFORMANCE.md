@@ -1,12 +1,12 @@
 # Uyum raporu (diferansiyel test)
 
-Komut: `python -m pytest -q tests` → **101 test geçti** (tarih 2026-10-18).
+Komut: `python -m pytest -q tests` → **109 test geçti** (tarih 2026-10-22, CONTRACT.md v1.0.0 sonrası).
 
 | Katman | Vektör | Sonuç |
 |---|---|---|
 | G\*Power arayüz vektörleri (oracle/) — a priori | 28 | N, df tam; güç/kritik/ncp 5e-8 içinde: **28/28** |
 | G\*Power arayüz vektörleri — post hoc | 9 | df tam; güç/kritik/ncp 5e-8 içinde: **9/9** |
-| G\*Power hata vektörleri | 3 | hata JSON'u + çıkış kodu ≠ 0 + mesaj parçası: **3/3** |
+| G\*Power hata vektörleri | 3 | hata JSON'u (error, code, field) + çıkış kodu 2 + mesaj parçası: **3/3** |
 | Ölçek (bağımsız scipy kaba kuvvet "hedefi sağlayan en küçük N") | 560 | N eşleşmesi **560/560 (%100)** |
 | CLI ↔ MCP eşliği (gerçek stdio MCP istemcisi) | 40 | çıktılar birebir aynı: **40/40** |
 | Sınır testleri | 10 test | geçti |

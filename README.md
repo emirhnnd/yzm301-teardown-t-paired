@@ -7,7 +7,7 @@
 **Eşleştirilmiş t testi (`t-paired`) için örneklem büyüklüğü ve güç hesabı · CLI + MCP + Türkçe yapay zekâ ajanı**
 
 ![python](https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white)
-![tests](https://img.shields.io/badge/tests-101%20passed-2ea44f)
+![tests](https://img.shields.io/badge/tests-109%20passed-2ea44f)
 ![oracle](https://img.shields.io/badge/G%2APower%20uyumu-40%2F40-2ea44f)
 ![scale](https://img.shields.io/badge/%C3%B6l%C3%A7ek%20testi-560%2F560-2ea44f)
 ![MCP](https://img.shields.io/badge/MCP-tool-8A2BE2)
@@ -98,13 +98,16 @@ pip install -e ".[test,mcp]"       # Python 3.9+; scipy gerekir, MCP için ek pa
 gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0.5 --alpha 0.05 --power 0.80
 ```
 ```json
-{"n1":34,"n2":34,"n_total":34,"actual_power":0.8077775,"power":0.8077775,"critical":2.0345153,"df":33,"ncp":2.9154759}
+{"ncp":2.9154759474226504,"critical_t":2.0345152974493383,"df":33,"n_total":34,"actual_power":0.8077775012792737}
 ```
 
 **post hoc, "34 kişiyle gücüm ne?"**
 
 ```bash
-gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n 34
+gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n_total 34
+```
+```json
+{"ncp":2.9154759474226504,"critical_t":2.0345152974493383,"df":33,"power":0.8077775012792737}
 ```
 
 **Hatalı girdi.** dz = 0 ise "fark yok" demektir, kaç kişi gerekeceği tanımsızdır:
@@ -113,13 +116,11 @@ gpower-clone --test t-paired --mode post-hoc --tails 2 --dz 0.5 --alpha 0.05 --n
 gpower-clone --test t-paired --mode a-priori --tails 2 --dz 0 --alpha 0.05 --power 0.8
 ```
 ```json
-{"error": "In an a priori analysis, the absolute value of the effect size be greater than 0.00001."}
+{"error": "In an a priori analysis, the absolute value of the effect size be greater than 0.00001.", "code": "OUT_OF_RANGE", "field": "dz"}
 ```
-Hatada çıkış kodu **2**'dir. Bu mesaj G\*Power'ın kendi mesajıdır (kasıtlı olarak aynı).
+Geçersiz girdide çıkış kodu **2**, iç hatada **1**'dir. Bu mesaj G\*Power'ın kendi mesajıdır (kasıtlı olarak aynı).
 
-Diğer yazım biçimleri: `powerlab` ve `python -m powerlab` aynı programdır; `--d` = `--dz`; `--n`, `--n-total`, `--sample-size` post hoc'ta aynı şeydir. Tam sözleşme için [SPEC.md](SPEC.md).
-
-> Ödev metnindeki `CONTRACT.md` bağlantısı boştu; bu yüzden parametre adları (`--dz`, `--n`) varsayıldı ve takma adlar eklendi.
+`powerlab` ve `python -m powerlab` aynı programdır. Bayraklar [CONTRACT.md](https://gist.github.com/seyyah/08d3e031781d853b17366be8ba264211) v1.0.0'a göredir: `--test --mode --tails --dz --alpha --power --n_total`; varsayılan yoktur, moda ait olmayan ya da bilinmeyen bayrak hatadır (`UNKNOWN_PARAM`), eksik olan `MISSING_PARAM` verir. Tek istisna `--ratio`'dur: kabul edilir ve yok sayılır (ortak test düzeneği tüm ailelere verebilir). Ayrıntı için [SPEC.md](SPEC.md) §5.
 
 ---
 
@@ -127,16 +128,16 @@ Diğer yazım biçimleri: `powerlab` ve `python -m powerlab` aynı programdır; 
 
 Çıktı tek satır JSON'dur (hem insan hem program okuyabilsin diye).
 
-| Alan | Anlamı | Örnekteki değer |
-|---|---|---|
-| `n_total` | Gereken (a priori) ya da verdiğin (post hoc) çift sayısı | 34 |
-| `n1`, `n2` | Eşleştirilmiş testte ikisi de N'ye eşit | 34, 34 |
-| `actual_power` / `power` | N tam sayı olduğundan gerçekte ulaşılan güç (hedeften biraz yüksek olabilir) | 0,8077775 (hedef 0,80) |
-| `critical` | Kritik t değeri: gözlenen t bunu aşarsa "fark var" denir | 2,0345 |
-| `df` | Serbestlik derecesi = N − 1 | 33 |
-| `ncp` | Merkezsel olmayan parametre = \|dz\|·√N; gücün hesabında kullanılır | 2,9155 |
+| Alan | Hangi modda | Anlamı | Örnekteki değer |
+|---|---|---|---|
+| `n_total` | a priori | Gereken çift sayısı | 34 |
+| `actual_power` | a priori | N tam sayı olduğundan gerçekte ulaşılan güç (hedeften biraz yüksek olabilir) | 0,8077775 (hedef 0,80) |
+| `power` | post hoc | Verilen N ile gücün kendisi | 0,8077775 |
+| `critical_t` | ikisi de | Kritik t değeri: gözlenen t bunu aşarsa "fark var" denir | 2,0345 |
+| `df` | ikisi de | Serbestlik derecesi = N − 1 | 33 |
+| `ncp` | ikisi de | Merkezsel olmayan parametre = \|dz\|·√N; gücün hesabında kullanılır | 2,9155 |
 
-Hata durumunda tek alan vardır: `{"error": "..."}`.
+Sayılar yuvarlanmadan, tam çift duyarlıkla yazılır; `n_total` ve `df` JSON tamsayısıdır. Hata durumunda `{"error": "...", "code": "...", "field": "..."}` gelir; kodlar `MISSING_PARAM`, `UNKNOWN_PARAM`, `INVALID_VALUE`, `OUT_OF_RANGE`, `INCONSISTENT`, `UNSUPPORTED`, `NO_SOLUTION`.
 
 ---
 
@@ -186,7 +187,7 @@ Hata durumunda tek alan vardır: `{"error": "..."}`.
 Test yöntemi **diferansiyel test**: aynı girdiyi hem G\*Power'a hem bizim programa verip çıktıları karşılaştırıyoruz.
 
 ```bash
-python -m pytest -q tests      # 101 test geçer (≈ 2 dakika sürer)
+python -m pytest -q tests      # 109 test geçer (≈ 2 dakika sürer)
 ```
 
 | Katman | Vektör | Sonuç |
@@ -223,15 +224,15 @@ MCP, bir yapay zekânın dış araçları çağırma standardıdır. `powerlab-m
 | `dz` | number | etki büyüklüğü (−20 … 20) |
 | `alpha` | number | (0, 1) |
 | `power` | number, isteğe bağlı | a priori için hedef güç (alfa ≤ güç < 1) |
-| `n` | int, isteğe bağlı | post hoc için çift sayısı (3 … 2147483646) |
+| `n_total` | int, isteğe bağlı | post hoc için çift sayısı (3 … 2147483646) |
 
-Çıktı CLI ile aynıdır: `n_total, n1, n2, actual_power, power, critical, df, ncp` ya da `{"error": "..."}`.
+Çıktı CLI ile aynıdır (a priori: `ncp, critical_t, df, n_total, actual_power`; post hoc: `ncp, critical_t, df, power`) ya da `{"error", "code", "field"}`.
 
 ### Türkçe AI ajanı (+10)
 
 Araştırmacı Türkçe sorar; ajan hangi teste ait olduğunu belirler, parametreleri çıkarır ve aracı çağırır. **Rakamları ajan hesaplamaz, yalnızca MCP aracı üretir.** Emin değilse (güven < 0,75) ya da test desteklenmiyorsa **sorar**.
 
-İki çıkarıcı var: kural tabanlı (çevrimdışı) ve LLM. LLM çıkarıcı olarak **hızlı bir model (Claude haiku, "Sistem 1" rolü) alt ajan olarak** kullanıldı; Jev erişimi yoktu, bu yüzden aynı etiket kümesine kısıtlı bir LLM kullandık (ödevin izin verdiği yol). Model yalnızca etiket, güven ve sorudaki sayıları üretir, hesap yapmaz.
+İki çıkarıcı var: kural tabanlı (çevrimdışı) ve LLM. Ödevin örnek verdiği hızlı karar veren Sistem 1 modeli **Jev'e erişimimiz yoktu**; ödevin izin verdiği şekilde aynı etiket kümesine kısıtlı bir LLM kullandık: **Claude haiku, alt ajan olarak ("Sistem 1" rolü)**. Model yalnızca etiket, güven ve sorudaki sayıları üretir, hesap yapmaz.
 
 ```bash
 python agent/run_eval.py        # kural tabanlı → agent/eval_report.md
@@ -265,13 +266,6 @@ Ayrıntı: `agent/calibration/`, `agent/eval_report_llm.md`, `agent/TOKEN_COMPAR
 
 Etiket kümesi: `t2-indep`, `t-paired`, `anova-oneway`, `chi2-contingency`, `multireg-r2`, `ambiguous`, `unsupported`.
 
----|---|
-| Test ailesi / yönlendirme doğru | 10/10 |
-| Parametreler doğru | 8/8 |
-| N ya da güç doğru (bağımsız scipy ile) | 8/8 |
-
-Etiket kümesi: `t2-indep`, `t-paired`, `anova-oneway`, `chi2-contingency`, `multireg-r2`, `ambiguous`, `unsupported`.
-
 ---
 
 ## 8. Repoda nereye bakmalıyım?
@@ -300,10 +294,13 @@ Etiket kümesi: `t2-indep`, `t-paired`, `anova-oneway`, `chi2-contingency`, `mul
 
 - **Kalibrasyon seti benim yazdığım sorulardır.** Sorular ve beklenen etiketler Claude tarafından yazıldı, etiketleyen model de Claude; yanlılık ortak olabilir. Kolay sette tavan etkisi var (%100) ve 140 tahminde yalnızca 1 yanlış var, bu yüzden kalibrasyon eğrisi istatistiksel olarak zayıf.
 - **Kural tabanlı çıkarıcı genelleştirmiyor.** 10 soruya bakılarak yazıldığı için orada 10/10, yeni sorularda 24/40 ve 9/30; yanlış aileyle araç çağırdığı vakalar var. LLM çıkarıcı bunu düzeltiyor, güvenilecek olan odur.
-- **Jev yoktu; Claude haiku kullanıldı** ve bu, alt ajan olarak çalıştı (`ANTHROPIC_API_KEY` ile `extract_llm` yolu hâlâ ölçülmedi).
+- **Jev erişimi yoktu; Claude haiku kullanıldı** ve bu, alt ajan olarak çalıştı (`ANTHROPIC_API_KEY` ile programdan doğrudan çağıran `extract_llm` yolu hâlâ ölçülmedi).
 - **GUI token karşılaştırması ölçüm değil, hesaptır.** G\*Power Başlat menüsünde kayıtlı olmadığı için gerçek bir GUI ajanı koşturulamadı; GUI süresi ve GUI doğruluğu ölçülmedi. MCP tarafı ölçüldü (bkz. `agent/TOKEN_COMPARISON.md`).
-- **Demo videosu ekran kaydı değildir.** `demo/make_video.py` gerçek komutları çalıştırıp çıktılarını terminal görünümünde çizer; çıktılar uydurma değildir, betik yeniden üretir.
+- **Demo videosu ekran kaydı değildir.** `demo/make_video.py` gerçek motoru ve gerçek komutları çalıştırıp sonuçlarını sahnelere çizer (40 vektörün yan yana tablosu dahil); çıktılar uydurma değildir, betik yeniden üretir. Videoda ses yoktur; sahne etiketleri ve altyazı satırları vardır.
 - **Doğrulanmamış kenarlar:** alfa ve güç için kesin geçerlilik aralıkları, |dz| ≤ 20 sınır mesajının tam ön eki ve çok küçük dz için üst sınır davranışı G\*Power'da denenmedi (`[AJAN]`, bkz. SPEC §8).
+- **n1 / n2.** İç temsil `[REA]` ile kanıtlandı: motor eşleştirilmiş testte `n1 = n2 = N/2` tutar, toplam `N = n1 + n2` (LEDGER 12, 29; adresler 0x4bdee0, 0x4d38b0, 0x5cac90, 0x5cac94). Sözleşme eşleştirilmiş test için `n1`/`n2` istemediğinden CLI bunları yazmaz; bilgi yalnızca kanıt kaydıdır (LEDGER 30).
+- **Sözleşme (CONTRACT.md v1.0.0) uygulandı.** Bonus modlar `compromise`, `criterion`, `sensitivity` yok (`UNSUPPORTED` döner). Çok büyük N / çok küçük dz davranışı G\*Power'la doğrulanmadı.
+- **SPEC'te olmayan iki ekleme var.** Motordaki `scipy.stats.nct.cdf` nan yedeği (HALLUCINATIONS #5) ve CLI'daki `--ratio` argümanı SPEC'te yazmıyor. İkisi de oracle sonuçlarını değiştirmez, ama motor bu iki noktada saf SPEC çıktısı değildir.
 - **Popülasyon düzeltmesi** (ikili dosyada bir alan var) arayüzden erişilebilir mi bilinmiyor; uygulanmadı.
 
 ---

@@ -15,4 +15,4 @@
 | İlaç ve plasebo gruplarını (bağımsız iki grup) karşılaştırıyorum, d=0.… | t2-indep | t2-indep | ask_researcher | None | None |
 | Üç tedavi kolunun ortalamalarını karşılaştırmak için kaç hasta gerekir… | anova-oneway | anova-oneway | ask_researcher | None | None |
 
-MCP yolu araç çağrısı+yanıt boyutu (tahmini token ≈ karakter/4): toplam ≈ 404 token, soru başına ≈ 50.
+MCP yolu araç çağrısı+yanıt boyutu (tahmini token ≈ karakter/4): toplam ≈ 365 token, soru başına ≈ 45.

@@ -43,7 +43,7 @@ def extract_rules(q: str):
     m = re.search(NUM + r"\s*(hasta|kişi|çift)", t)
     posthoc = bool(re.search(r"gücü nedir|güç (kaç|ne)|çalışmanın gücü", t)) and "power" not in p
     if posthoc and m:
-        p["mode"] = "post-hoc"; p["n"] = int(_f(m.group(1)))
+        p["mode"] = "post-hoc"; p["n_total"] = int(_f(m.group(1)))
     else:
         p["mode"] = "a-priori"
     return p
@@ -51,7 +51,7 @@ def extract_rules(q: str):
 def extract_llm(q: str):  # pragma: no cover  (API anahtarı gerektirir)
     import anthropic
     c = anthropic.Anthropic()
-    sys_p = ("Yalnızca JSON döndür: {family, confidence, params:{mode,tails,dz,alpha,power,n}}. family etiketleri: " + ",".join(LABELS) +
+    sys_p = ("Yalnızca JSON döndür: {family, confidence, params:{mode,tails,dz,alpha,power,n_total}}. family etiketleri: " + ",".join(LABELS) +
              ". ASLA hesap yapma, N ya da güç üretme; yalnızca soruda yazan sayıları çıkar.")
     r = c.messages.create(model=os.environ.get("AGENT_MODEL", "claude-sonnet-5-5"), max_tokens=300, system=sys_p,
                           messages=[{"role": "user", "content": q}])
@@ -83,9 +83,9 @@ async def answer(session, q, log, extractor="rules"):
         if "error" in out:
             rec["reply"] = "Hesap motoru hata verdi: " + out["error"]
         elif params["mode"] == "a-priori":
-            rec["reply"] = f"Gerekli örneklem: {out['n_total']} çift (gerçek güç {out['actual_power']:.4f}, kritik t {out['critical']}, df {out['df']})."
+            rec["reply"] = f"Gerekli örneklem: {out['n_total']} çift (gerçek güç {out['actual_power']:.4f}, kritik t {out['critical_t']:.4f}, df {out['df']})."
         else:
-            rec["reply"] = f"Güç: {out['actual_power']:.4f} (N={out['n_total']}, df {out['df']})."
+            rec["reply"] = f"Güç: {out['power']:.4f} (N={args['n_total']}, df {out['df']})."
     log.write(json.dumps(rec, ensure_ascii=False) + "\n"); log.flush()
     return rec
 
