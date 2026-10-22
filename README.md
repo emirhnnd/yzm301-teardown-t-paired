@@ -201,6 +201,13 @@ python -m pytest -q tests      # 113 test geçer, 1 bilinen sapma xfail (≈ 2 d
 
 Sayılar 5e-8 hassasiyetle eşleşir (G\*Power 7 hane gösterir). Kaynak veriler [oracle/oracle_vectors.csv](oracle/oracle_vectors.csv), her satırın ekran görüntüsü `oracle/screenshots/` altında. 22 Ekim'de toplanan 5 kenar vektörü (dz = 0.001, 20, 21, 0.00001 ve alfa = 0.2; biri hata, biri bilinen sapma) [oracle/oracle_boundary.csv](oracle/oracle_boundary.csv) ve `oracle/screenshots_boundary/` altındadır. Tam rapor: [tests/CONFORMANCE.md](tests/CONFORMANCE.md).
 
+Üç örnek G\*Power ekranı (sol: a priori, orta: G\*Power'ın hata penceresi, sağ: sınır dışı dz):
+
+| Vektör 2: N = 34 | Vektör 28: dz = 0 hata | Kenar b3: dz = 21 hata |
+|---|---|---|
+| <img src="oracle/screenshots/02.png" width="260"> | <img src="oracle/screenshots/28.png" width="260"> | <img src="oracle/screenshots_boundary/b03.png" width="260"> |
+
+
 <details>
 <summary><b>Bir test neden "kendi kendini kandırmaz"?</b></summary>
 
