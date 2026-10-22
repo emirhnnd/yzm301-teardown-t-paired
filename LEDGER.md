@@ -56,6 +56,7 @@ Adresler Ghidra'nın verdiği `FUN_xxxxxxxx` adresleridir. Alıntılar kısadır
 | 28 | [KÂHİN] | Negatif dz: N, \|dz\| ile aynı; ekranda kritik t ve δ negatif işaretli (vektör 29, 30) | oracle 29, 30 |
 | 29 | [REA] | Eşleştirilmiş testte motor içinde **n1 = n2 = N/2**; toplam N = n1 + n2 olarak [+0xe8]'e yazılır (n1 [+0xc0], n2 [+0xc8]). Yani df ve ncp'deki N, toplamdır ve çift sayısına eşittir. Arayüz yalnızca toplam örneklem büyüklüğünü gösterir | 0x4bdee0 (n1 = n2 = N·0,5), 0x4d38b0 (n1+n2), 0x5cac90, 0x5cac94 |
 | 30 | [AJAN] | CONTRACT.md v1.0.0 eşleştirilmiş test için `n1`/`n2` çıktısı istemez (a-priori: ncp, critical_t, df, n_total, actual_power; post-hoc: ncp, critical_t, df, power); CLI bu yüzden yalnızca `n_total` yazar. Motorun iç temsili (29. satır) N/2 + N/2'dir | oracle'da n1/n2 yok |
+| 31 | [KÂHİN] | a-priori N için üst sınır yok (dz = 1e-5, N = 61823520102 döner); dz ∉ [−20, 20] mesajı `Effect size d is outside the admissible range (-20, 20).`; dz = 1e-5'te G*Power'ın N'si matematiksel kökten ~3e-5 göreli sapar (bilinen sapma) | oracle_boundary.csv b3, b4 |
 
 ## Bilinmeyenler (çözülmedi; [AJAN] olarak SPEC'te işaretli)
 

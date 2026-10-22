@@ -3,7 +3,7 @@
 Sahnelerdeki sayılar uydurma değildir:
   * terminal sahnesi gerçek komutları çalıştırır,
   * doğrulama ızgarası oracle/oracle_vectors.csv'yi okur ve her vektörü gerçek motorla yeniden hesaplar,
-  * test sayıları `python -m pytest -q tests` çıktısından alınmıştır (109 test, 2026-10-22).
+  * test sayıları `python -m pytest -q tests` çıktısından alınmıştır (113 test, 2026-10-22).
 Çalıştırma:  pip install -e ".[test]" pillow ; python demo/make_video.py   ->  demo/demo.mp4
 """
 import csv
@@ -39,7 +39,7 @@ BG = (13, 17, 26); PANEL = (24, 30, 44); TXT = (232, 236, 245); MUTED = (140, 15
 TEAL = (45, 212, 191); AMBER = (251, 191, 36); GREEN = (74, 222, 128); RED = (248, 113, 113); LINEC = (48, 58, 80)
 
 # test sayıları: python -m pytest -q tests (2026-10-22)
-N_TESTS, N_SCALE, N_PARITY = 109, 560, 40
+N_TESTS, N_SCALE, N_PARITY = 113, 560, 40
 LLM_EASY, LLM_HARD = "40/40", "29/30"
 
 SEGS = []  # (PIL image, kare sayısı)

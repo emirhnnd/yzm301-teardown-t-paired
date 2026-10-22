@@ -7,7 +7,7 @@
 **Eşleştirilmiş t testi (`t-paired`) için örneklem büyüklüğü ve güç hesabı · CLI + MCP + Türkçe yapay zekâ ajanı**
 
 ![python](https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white)
-![tests](https://img.shields.io/badge/tests-109%20passed-2ea44f)
+![tests](https://img.shields.io/badge/tests-113%20passed%20%C2%B7%201%20xfail-2ea44f)
 ![oracle](https://img.shields.io/badge/G%2APower%20uyumu-40%2F40-2ea44f)
 ![scale](https://img.shields.io/badge/%C3%B6l%C3%A7ek%20testi-560%2F560-2ea44f)
 ![MCP](https://img.shields.io/badge/MCP-tool-8A2BE2)
@@ -187,7 +187,7 @@ Sayılar yuvarlanmadan, tam çift duyarlıkla yazılır; `n_total` ve `df` JSON 
 Test yöntemi **diferansiyel test**: aynı girdiyi hem G\*Power'a hem bizim programa verip çıktıları karşılaştırıyoruz.
 
 ```bash
-python -m pytest -q tests      # 109 test geçer (≈ 2 dakika sürer)
+python -m pytest -q tests      # 113 test geçer, 1 bilinen sapma xfail (≈ 2 dakika sürer)
 ```
 
 | Katman | Vektör | Sonuç |
@@ -297,9 +297,9 @@ Etiket kümesi: `t2-indep`, `t-paired`, `anova-oneway`, `chi2-contingency`, `mul
 - **Jev erişimi yoktu; Claude haiku kullanıldı** ve bu, alt ajan olarak çalıştı (`ANTHROPIC_API_KEY` ile programdan doğrudan çağıran `extract_llm` yolu hâlâ ölçülmedi).
 - **GUI token karşılaştırması ölçüm değil, hesaptır.** G\*Power Başlat menüsünde kayıtlı olmadığı için gerçek bir GUI ajanı koşturulamadı; GUI süresi ve GUI doğruluğu ölçülmedi. MCP tarafı ölçüldü (bkz. `agent/TOKEN_COMPARISON.md`).
 - **Demo videosu ekran kaydı değildir.** `demo/make_video.py` gerçek motoru ve gerçek komutları çalıştırıp sonuçlarını sahnelere çizer (40 vektörün yan yana tablosu dahil); çıktılar uydurma değildir, betik yeniden üretir. Videoda ses yoktur; sahne etiketleri ve altyazı satırları vardır.
-- **Doğrulanmamış kenarlar:** alfa ve güç için kesin geçerlilik aralıkları, |dz| ≤ 20 sınır mesajının tam ön eki ve çok küçük dz için üst sınır davranışı G\*Power'da denenmedi (`[AJAN]`, bkz. SPEC §8).
+- **Kenar vektörleri (22 Ekim, `oracle/oracle_boundary.csv`, hepsi tek yönlü):** dz = 0.001 (N = 6182559), dz = 20 (güç 1), dz = 21 (hata `Effect size d is outside the admissible range (-20, 20).`) ve alfa = 0.2 G\*Power ile birebir eşleşti. **Bir bilinen sapma:** dz = 0.00001 için G\*Power N = 61823520102 verir (gerçek güç 0.7999842, hedefin altında; çok büyük df'de kendi sayısal sınırı), klon matematiksel kökü 61825572322 verir. Test xfail olarak işaretli; nedeni REA ile incelenmedi. Alfa/güç için kesin geçerlilik aralıkları yine denenmedi (`[AJAN]`, SPEC §8).
 - **n1 / n2.** İç temsil `[REA]` ile kanıtlandı: motor eşleştirilmiş testte `n1 = n2 = N/2` tutar, toplam `N = n1 + n2` (LEDGER 12, 29; adresler 0x4bdee0, 0x4d38b0, 0x5cac90, 0x5cac94). Sözleşme eşleştirilmiş test için `n1`/`n2` istemediğinden CLI bunları yazmaz; bilgi yalnızca kanıt kaydıdır (LEDGER 30).
-- **Sözleşme (CONTRACT.md v1.0.0) uygulandı.** Bonus modlar `compromise`, `criterion`, `sensitivity` yok (`UNSUPPORTED` döner). Çok büyük N / çok küçük dz davranışı G\*Power'la doğrulanmadı.
+- **Sözleşme (CONTRACT.md v1.0.0) uygulandı.** Bonus modlar `compromise`, `criterion`, `sensitivity` yok (`UNSUPPORTED` döner). Çok büyük N yalnızca yukarıdaki dz = 1e-5 noktasında G\*Power'dan ayrışıyor.
 - **SPEC'te olmayan iki ekleme var.** Motordaki `scipy.stats.nct.cdf` nan yedeği (HALLUCINATIONS #5) ve CLI'daki `--ratio` argümanı SPEC'te yazmıyor. İkisi de oracle sonuçlarını değiştirmez, ama motor bu iki noktada saf SPEC çıktısı değildir.
 - **Popülasyon düzeltmesi** (ikili dosyada bir alan var) arayüzden erişilebilir mi bilinmiyor; uygulanmadı.
 

@@ -132,7 +132,7 @@ def _common(tails, dz, alpha):
     if not (0.0 < alpha < 1.0):
         raise PowerError("alpha must be in the open interval (0, 1)", "OUT_OF_RANGE", "alpha")
     if not (-20.0 <= dz <= 20.0):
-        raise PowerError("Effect size dz is outside the admissible range (-20, 20)", "OUT_OF_RANGE", "dz")
+        raise PowerError("Effect size d is outside the admissible range (-20, 20)", "OUT_OF_RANGE", "dz")
     return int(t), dz, alpha
 
 
@@ -189,14 +189,10 @@ def a_priori(tails, dz, alpha, power_target):
         while f(hi) < 0:
             lo = hi
             hi = hi * 1.6
-            if lo > N_MAX:
-                raise PowerError(RANGE_MSG, "NO_SOLUTION", "n_total")
     if lo < LO:
         lo = LO
     root = brent(f, lo, hi)
     n = round_up_n(root)
     if n < lo:
         n = round_up_n(lo)
-    if n > N_MAX:
-        raise PowerError(RANGE_MSG, "NO_SOLUTION", "n_total")
     return _outputs(int(n), tails, dz, alpha)

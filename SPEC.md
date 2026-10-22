@@ -68,7 +68,7 @@ Kütüphaneler (R `pwr`, `statsmodels`) kesirli N verir; bu referans her zaman y
 ### 2.2 Notlar
 
 - `power_hedef <= power(2, ...)` ise `N = 2` olur (alt sınır). Örn. dz=0.5, alpha=0.05, 2 yönlü: `power(2) = 0.0619486`, bu yüzden hedef 0.05, 0.051 ya da 0.06 için `N = 2`. [L22][KÂHİN]
-- `N` üst sınırı 2147483646'dır; çözücü bunu aşarsa hata (bölüm 4) verilir. [AJAN]
+- a-priori çözümde `N` için üst sınır **uygulanmaz**: G*Power dz = 0.00001 için N = 61823520102 döndürür (b4, 22 Ekim). 2147483646 sınırı yalnızca post-hoc girdisi içindir. [KÂHİN]
 
 ## 3. post-hoc (güç hesapla)
 
@@ -83,9 +83,9 @@ Hata mesajlarının **ilk satırı** referanstan gözlenmiştir. CLI hatada çı
 | `alpha > power` (`alpha == power` geçerli) | a-priori | `Power must be greater than or equal to alpha.` (`INCONSISTENT`) | [L24] [KÂHİN] vektör 26, 27 |
 | `abs(dz) < 1e-5` (tam 1e-5 geçerli) | a-priori | `In an a priori analysis, the absolute value of the effect size be greater than 0.00001.` | [L26] [KÂHİN] vektör 28 |
 | `N < 3` ya da `N > 2147483646` (N tamsayı) | post-hoc | `Total sample size is outside the admissible range (3, 2147483646)` | [L25] [KÂHİN] vektör 36 |
-| `dz` ∉ [−20, 20] | iki mod | `... is outside the admissible range (-20, 20)` | [L26] [AJAN] kenar vektörü yok |
+| `dz` ∉ [−20, 20] | iki mod | `Effect size d is outside the admissible range (-20, 20).` | [KÂHİN] vektör b3 (dz = 21) |
 | `alpha` ∉ (0,1), `power` ∉ (0,1), `tails` ∉ {1,2}, eksik/sayı olmayan girdi | iki mod | herhangi bir açıklayıcı mesaj | [AJAN] |
-| Hesaplanan a-priori N > 2147483646 | a-priori | `Total sample size is outside the admissible range (3, 2147483646)` | [AJAN] |
+| Hesaplanan a-priori N > 2147483646 | a-priori | hata yok; N olduğu gibi döner (bkz. §2 not) | [KÂHİN] vektör b4 |
 
 Not: a-priori modda `N = 2` **geçerli** bir sonuçtur (alt sınır kıstırma), post-hoc modda `N = 2` girişi hatadır. [L22]
 
@@ -234,7 +234,6 @@ Feature: sınır davranışları
 ## 8. Bilinmeyenler ve sınama planı
 
 - `alpha`, `power` için kesin admissible aralığı bilinmiyor: (0,1) varsayıldı. [AJAN]
-- `dz` ±20 sınırının hata metninin ön eki bilinmiyor. [AJAN]
-- Çok küçük dz (örn. 1e-5) için N > 2147483646 olur; referans davranışı gözlenmedi. [AJAN]
+- dz = 1e-5 için G*Power N = 61823520102 verir (gerçek güç 0.7999842, hedefin altında: G*Power'ın çok büyük df'deki sayısal sınırı); klon matematiksel kökü (61825572322) verir. Bilinen sapma, `oracle/oracle_boundary.csv` b4, testte xfail. dz = 0.001 (N = 6182559) tam eşleşir. [KÂHİN]
 - `n1`/`n2` CLI çıktısında yer almaz (CONTRACT.md istemez); iç temsil için bkz. §1.2.
 - `compromise`, `criterion`, `sensitivity` modları uygulanmadı (sözleşmede bonus).

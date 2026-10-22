@@ -1,0 +1,6 @@
+id,mode,tails,dz,alpha,power_in,n_in,n_total,actual_power,critical_t,df,ncp,screenshot,notes
+b1,a-priori,1,0.001,0.05,0.8,,6182559,0.8000000,1.6448539,6182558,2.4864752,screenshots_boundary/b01.png,
+b2,post-hoc,1,20,0.05,,10,,1.0000000,1.8331129,9,63.2455532,screenshots_boundary/b02.png,
+b3,post-hoc,1,21,0.05,,10,,,,,,screenshots_boundary/b03.png,ERROR: Effect size d is outside the admissible range (-20, 20).
+b4,a-priori,1,0.00001,0.05,0.8,,61823520102,0.7999842,1.6448536,61823520101,2.4864336,screenshots_boundary/b04.png,G*Power N is not the exact root (actual power 0.7999842 < 0.8); clone gives 61825572322
+b5,a-priori,1,0.5,0.2,0.95,,26,0.9544380,0.8562362,25,2.5495098,screenshots_boundary/b05.png,

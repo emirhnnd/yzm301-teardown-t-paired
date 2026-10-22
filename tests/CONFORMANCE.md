@@ -1,6 +1,6 @@
 # Uyum raporu (diferansiyel test)
 
-Komut: `python -m pytest -q tests` → **109 test geçti** (tarih 2026-10-22, CONTRACT.md v1.0.0 sonrası).
+Komut: `python -m pytest -q tests` → **113 test geçti, 1 xfail (bilinen sapma)** (tarih 2026-10-22, CONTRACT.md v1.0.0 sonrası).
 
 | Katman | Vektör | Sonuç |
 |---|---|---|
@@ -10,6 +10,7 @@ Komut: `python -m pytest -q tests` → **109 test geçti** (tarih 2026-10-22, CO
 | Ölçek (bağımsız scipy kaba kuvvet "hedefi sağlayan en küçük N") | 560 | N eşleşmesi **560/560 (%100)** |
 | CLI ↔ MCP eşliği (gerçek stdio MCP istemcisi) | 40 | çıktılar birebir aynı: **40/40** |
 | Sınır testleri | 10 test | geçti |
+| Sınır vektörleri (oracle/oracle_boundary.csv, 22 Ekim) | 5 | 4 tam eşleşme, 1 bilinen sapma (dz = 1e-5, xfail) |
 
 ## Açıklanan farklar (bulgular)
 
