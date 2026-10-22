@@ -6,6 +6,12 @@ kanıt defteri ve SPEC.md üret; bu oturumda kod yazma.
 
 Not: öğrencinin kendi cümleleri birebir kayıtlı değildir; oturum bağlam sınırına ulaştığı için özetle devam etmiştir. Aşağıdaki duyuru metni birebirdir.
 
+Öğrencinin konu seçimi (kendi ifadesiyle, birebir):
+
+> K2 2) t testi, eşleştirilmiş ortalama (önce ve sonra tansiyon)
+
+Diğer cümleleri kayıtlı değildir.
+
 ---
 
 G*Power, klinik araştırmacıların "kaç denek gerekir?" sorusunu yanıtladığı ücretsiz bir araç. Ama yalnızca grafik arayüzü var; ne CLI'si ne API'si var. Bir AI ajanı onu ancak ekran görüntüsü alıp tıklayarak kullanabiliyor ve bu her çağrıda çok token demek.
