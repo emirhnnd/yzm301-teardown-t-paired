@@ -199,7 +199,7 @@ python -m pytest -q tests      # 113 test geçer, 1 bilinen sapma xfail (≈ 2 d
 | CLI ile MCP çıktısı birebir aynı mı (gerçek MCP istemcisiyle) | 40 | ✅ 40/40 |
 | Sınır değer testleri | 10 test | ✅ |
 
-Sayılar 5e-8 hassasiyetle eşleşir (G\*Power 7 hane gösterir). Kaynak veriler [oracle/oracle_vectors.csv](oracle/oracle_vectors.csv), her satırın ekran görüntüsü `oracle/screenshots/` altında. Tam rapor: [tests/CONFORMANCE.md](tests/CONFORMANCE.md).
+Sayılar 5e-8 hassasiyetle eşleşir (G\*Power 7 hane gösterir). Kaynak veriler [oracle/oracle_vectors.csv](oracle/oracle_vectors.csv), her satırın ekran görüntüsü `oracle/screenshots/` altında. 22 Ekim'de toplanan 5 kenar vektörü (dz = 0.001, 20, 21, 0.00001 ve alfa = 0.2; biri hata, biri bilinen sapma) [oracle/oracle_boundary.csv](oracle/oracle_boundary.csv) ve `oracle/screenshots_boundary/` altındadır. Tam rapor: [tests/CONFORMANCE.md](tests/CONFORMANCE.md).
 
 <details>
 <summary><b>Bir test neden "kendi kendini kandırmaz"?</b></summary>
